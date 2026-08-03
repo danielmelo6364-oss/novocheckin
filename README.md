@@ -164,11 +164,11 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 
 <div id="toast" class="toast"></div>
 
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js"></script>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+import { getDatabase, ref, push, onValue, remove } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js';
 
-<script>
 const firebaseConfig = {
   apiKey: "AIzaSyDnMsL-dhv3uM2tP3B-IcJUFHVo1MmoW2k",
   authDomain: "checkin-4760f.firebaseapp.com",
@@ -179,9 +179,9 @@ const firebaseConfig = {
   databaseURL: "https://checkin-4760f-default-rtdb.firebaseio.com"
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const storage = firebase.storage();
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const storage = getStorage(app);
 
 let coresTemp = [];
 let fotoFile = null;
@@ -214,23 +214,23 @@ document.getElementById('foto-input').addEventListener('change', function(e) {
   reader.readAsDataURL(file);
 });
 
-function adicionarCor() {
+window.adicionarCor = function() {
   const cor = document.getElementById('cor-input').value.trim();
   if (!cor) { toast('⚠️ Digite uma cor'); return; }
   if (coresTemp.find(c => c.nome === cor)) { toast('⚠️ Cor já existe'); return; }
   coresTemp.push({ nome: cor, gondola: 0, estoque: 0 });
   renderCores();
   document.getElementById('cor-input').value = '';
-}
+};
 
-function removerCor(idx) {
+window.removerCor = function(idx) {
   coresTemp.splice(idx, 1);
   renderCores();
-}
+};
 
-function atualizarCorQtd(idx, campo, valor) {
+window.atualizarCorQtd = function(idx, campo, valor) {
   coresTemp[idx][campo] = parseInt(valor) || 0;
-}
+};
 
 function renderCores() {
   const el = document.getElementById('cores-list');
@@ -254,7 +254,7 @@ function renderCores() {
   `).join('');
 }
 
-async function registrarProduto() {
+window.registrarProduto = async function() {
   const nome = document.getElementById('f-nome').value.trim();
   const ref = document.getElementById('f-ref').value.trim();
   const tipo = document.getElementById('f-tipo').value;
@@ -268,9 +268,10 @@ async function registrarProduto() {
 
   if (fotoFile) {
     try {
-      const storageRef = storage.ref(`produtos/${Date.now()}_${fotoFile.name}`);
-      const snapshot = await storageRef.put(fotoFile);
-      fotoURL = await snapshot.ref.getDownloadURL();
+      const fileName = `${Date.now()}_${fotoFile.name}`;
+      const fileRef = storageRef(storage, `produtos/${fileName}`);
+      await uploadBytes(fileRef, fotoFile);
+      fotoURL = await getDownloadURL(fileRef);
     } catch (err) {
       toast('❌ Erro ao salvar foto: ' + err.message);
       return;
@@ -290,7 +291,8 @@ async function registrarProduto() {
     foto: fotoURL
   };
 
-  db.ref('produtos').push(produto).then(() => {
+  try {
+    await push(ref(db, 'produtos'), produto);
     document.getElementById('f-nome').value = '';
     document.getElementById('f-ref').value = '';
     document.getElementById('f-tipo').value = '';
@@ -304,13 +306,13 @@ async function registrarProduto() {
     renderCores();
     fotoFile = null;
     toast('✅ Produto registrado com sucesso!');
-  }).catch(err => {
+  } catch (err) {
     toast('❌ Erro: ' + err.message);
-  });
-}
+  }
+};
 
 function carregarProdutos() {
-  db.ref('produtos').once('value', snapshot => {
+  onValue(ref(db, 'produtos'), snapshot => {
     const dados = snapshot.val();
     const lista = dados ? Object.entries(dados).map(([key, val]) => ({id: key, ...val})) : [];
 
@@ -351,15 +353,16 @@ function carregarProdutos() {
   });
 }
 
-function deletarProduto(id) {
+window.deletarProduto = async function(id) {
   if (!confirm('Deletar este produto?')) return;
-  db.ref(`produtos/${id}`).remove().then(() => {
+  try {
+    await remove(ref(db, `produtos/${id}`));
     toast('✅ Deletado!');
     carregarProdutos();
-  }).catch(err => {
+  } catch (err) {
     toast('❌ Erro: ' + err.message);
-  });
-}
+  }
+};
 </script>
 
 </body>
