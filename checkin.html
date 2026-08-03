@@ -27,17 +27,18 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
 @media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr;}}
 .foto-upload{border:2px dashed #e0c0cc;border-radius:12px;padding:24px;text-align:center;cursor:pointer;background:#fdf5f7;}
-.foto-upload:hover{border-color:var(--rose);background:#fff;}
+.foto-upload:hover{border-color:var(--rose);}
 .foto-upload input{display:none;}
 .foto-icon{font-size:32px;margin-bottom:8px;}
 .foto-text{font-size:12px;color:var(--muted);}
 #preview-img{width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin-top:12px;display:none;}
-.cores-container{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
-.cor-item{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #e0d0d5;border-radius:8px;padding:8px 12px;font-size:13px;}
-.cor-item button{background:#dc3545;color:#fff;border:none;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:11px;font-weight:700;}
-.cor-input{display:flex;gap:8px;align-items:flex-end;}
-.cor-input input{flex:1;}
-.cor-input button{background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;}
+.cores-container{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;background:#fdf5f7;padding:16px;border-radius:10px;}
+.cor-item{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:flex-end;background:#fff;border:1.5px solid #e0d0d5;border-radius:8px;padding:12px;}
+.cor-item input{margin-bottom:0;}
+.cor-item button{background:#dc3545;color:#fff;border:none;border-radius:4px;padding:8px 12px;cursor:pointer;font-size:11px;font-weight:700;height:42px;}
+.cor-input{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:flex-end;}
+.cor-input input{margin-bottom:0;}
+.cor-input button{background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;height:42px;}
 .btn-primary{width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;font-size:15px;font-weight:700;cursor:pointer;}
 .btn-primary:hover{opacity:.9;}
 .produtos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
@@ -47,7 +48,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 .produto-card h3{font-size:14px;font-weight:700;margin-bottom:4px;}
 .produto-card .ref{font-size:11px;color:var(--muted);margin-bottom:8px;}
 .produto-card .tipo{display:inline-block;background:var(--rose-light);color:var(--rose-dark);padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px;}
-.produto-card .cores-list{font-size:11px;color:var(--muted);margin-bottom:8px;}
+.produto-card .cores-list{font-size:11px;color:var(--muted);margin-bottom:8px;max-height:60px;overflow-y:auto;}
 .produto-card .preco{font-size:16px;font-weight:800;color:var(--rose-dark);margin-bottom:8px;}
 .btn-delete{background:#dc3545;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;width:100%;}
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
@@ -61,6 +62,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 .relatorio-table{width:100%;border-collapse:collapse;font-size:13px;}
 .relatorio-table th{background:var(--rose-light);color:var(--rose-dark);padding:12px;text-align:left;font-weight:700;border-bottom:2px solid var(--rose);}
 .relatorio-table td{padding:12px;border-bottom:1px solid #f0e0e5;}
+.cor-label{font-size:12px;font-weight:700;color:var(--rose-dark);margin-bottom:4px;text-transform:uppercase;}
 </style>
 </head>
 <body>
@@ -68,7 +70,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 <div class="container">
   <header>
     <div class="h-title">💎 GÉOR — Check-in de Produtos</div>
-    <div class="h-sub">Registre suas semijoias, bijuterias e acessórios</div>
+    <div class="h-sub">Registre suas semijoias com variações de cores e quantidades</div>
   </header>
 
   <div class="tabs">
@@ -133,26 +135,13 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
       </div>
 
       <div class="form-group">
-        <label>Variações de Cores *</label>
+        <label>Variações de Cores com Quantidades *</label>
         <div class="cores-container" id="cores-list"></div>
         <div class="cor-input">
-          <input type="text" id="cor-input" placeholder="Ex: Ouro, Prata, Rose..."/>
+          <input type="text" id="cor-input" placeholder="Ex: Ouro"/>
+          <input type="number" id="cor-gondola" min="0" placeholder="Gôndola"/>
+          <input type="number" id="cor-estoque" min="0" placeholder="Estoque"/>
           <button type="button" onclick="adicionarCor()">+ Adicionar</button>
-        </div>
-      </div>
-
-      <div class="grid3">
-        <div class="form-group">
-          <label>Qtd. Gôndola</label>
-          <input type="number" id="f-gondola" min="0" placeholder="0"/>
-        </div>
-        <div class="form-group">
-          <label>Qtd. Estoque</label>
-          <input type="number" id="f-estoque" min="0" placeholder="0"/>
-        </div>
-        <div class="form-group">
-          <label>Alertar abaixo de</label>
-          <input type="number" id="f-alerta" min="0" placeholder="5"/>
         </div>
       </div>
 
@@ -192,8 +181,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
               <th>Produto</th>
               <th>Tipo</th>
               <th>Cores</th>
-              <th>Gôndola</th>
-              <th>Estoque</th>
               <th>Preço</th>
             </tr>
           </thead>
@@ -225,7 +212,6 @@ const db = getDatabase(app);
 
 let coresTemp = [];
 let fotoB64 = null;
-let produtosGlobal = [];
 
 function toast(msg) {
   const t = document.getElementById('toast');
@@ -261,11 +247,18 @@ document.getElementById('foto-input').addEventListener('change', function(e) {
 // CORES
 window.adicionarCor = function() {
   const cor = document.getElementById('cor-input').value.trim();
+  const gondola = parseInt(document.getElementById('cor-gondola').value) || 0;
+  const estoque = parseInt(document.getElementById('cor-estoque').value) || 0;
+
   if (!cor) { toast('⚠️ Digite uma cor'); return; }
-  if (coresTemp.includes(cor)) { toast('⚠️ Cor já existe'); return; }
-  coresTemp.push(cor);
+  if (coresTemp.find(c => c.nome === cor)) { toast('⚠️ Cor já existe'); return; }
+  if (gondola === 0 && estoque === 0) { toast('⚠️ Informe uma quantidade'); return; }
+
+  coresTemp.push({ nome: cor, gondola, estoque });
   renderCores();
   document.getElementById('cor-input').value = '';
+  document.getElementById('cor-gondola').value = '';
+  document.getElementById('cor-estoque').value = '';
 };
 
 window.removerCor = function(idx) {
@@ -277,7 +270,15 @@ function renderCores() {
   const el = document.getElementById('cores-list');
   el.innerHTML = coresTemp.map((cor, i) => `
     <div class="cor-item">
-      ${cor}
+      <div>
+        <div class="cor-label">${cor.nome}</div>
+      </div>
+      <div>
+        <div class="cor-label">Gôndola: ${cor.gondola}</div>
+      </div>
+      <div>
+        <div class="cor-label">Estoque: ${cor.estoque}</div>
+      </div>
       <button type="button" onclick="removerCor(${i})">✕</button>
     </div>
   `).join('');
@@ -302,9 +303,6 @@ window.registrarProduto = async function() {
     fornecedor: document.getElementById('f-forn').value.trim(),
     custo: parseFloat(document.getElementById('f-custo').value) || 0,
     preco: parseFloat(document.getElementById('f-preco').value) || 0,
-    gondola: parseInt(document.getElementById('f-gondola').value) || 0,
-    estoque: parseInt(document.getElementById('f-estoque').value) || 0,
-    alerta: parseInt(document.getElementById('f-alerta').value) || 5,
     obs: document.getElementById('f-obs').value.trim(),
     cores: [...coresTemp],
     foto: fotoB64 || null
@@ -319,9 +317,6 @@ window.registrarProduto = async function() {
     document.getElementById('f-forn').value = '';
     document.getElementById('f-custo').value = '';
     document.getElementById('f-preco').value = '';
-    document.getElementById('f-gondola').value = '';
-    document.getElementById('f-estoque').value = '';
-    document.getElementById('f-alerta').value = '';
     document.getElementById('f-obs').value = '';
     document.getElementById('preview-img').style.display = 'none';
     document.getElementById('foto-input').value = '';
@@ -340,7 +335,6 @@ function renderProdutos() {
   onValue(ref(db, 'produtos'), (snapshot) => {
     const dados = snapshot.val();
     let lista = dados ? Object.entries(dados).map(([key, val]) => ({firebaseId: key, ...val})) : [];
-    produtosGlobal = lista;
 
     const stats = document.getElementById('stats-produtos');
     const grid = document.getElementById('produtos-grid');
@@ -355,8 +349,14 @@ function renderProdutos() {
 
     empty.style.display = 'none';
     const total = lista.length;
-    const totalItens = lista.reduce((a, p) => a + (p.gondola || 0) + (p.estoque || 0), 0);
-    const totalValor = lista.reduce((a, p) => a + ((p.preco || 0) * ((p.gondola || 0) + (p.estoque || 0))), 0);
+    const totalItens = lista.reduce((a, p) => {
+      const cores = p.cores || [];
+      return a + cores.reduce((sum, c) => sum + (c.gondola || 0) + (c.estoque || 0), 0);
+    }, 0);
+    const totalValor = lista.reduce((a, p) => {
+      const cores = p.cores || [];
+      return a + ((p.preco || 0) * cores.reduce((sum, c) => sum + (c.gondola || 0) + (c.estoque || 0), 0));
+    }, 0);
 
     stats.innerHTML = `
       <div class="stat-box"><div class="num">${total}</div><div class="lbl">Produtos</div></div>
@@ -369,9 +369,10 @@ function renderProdutos() {
         <h3>${p.nome}</h3>
         <div class="ref">${p.ref}</div>
         <div class="tipo">${p.tipo}</div>
-        <div class="cores-list">🎨 ${(p.cores || []).join(', ')}</div>
+        <div class="cores-list">
+          ${(p.cores || []).map(c => `🎨 ${c.nome}: ${c.gondola}G / ${c.estoque}E`).join('<br>')}
+        </div>
         <div class="preco">R$ ${(p.preco || 0).toFixed(2).replace('.', ',')}</div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">🛒 ${p.gondola || 0} | 📦 ${p.estoque || 0}</div>
         <button class="btn-delete" onclick="deletarProduto('${p.firebaseId}')">🗑️ Deletar</button>
       </div>
     `).join('');
@@ -396,8 +397,14 @@ function gerarRelatorio() {
 
     const stats = document.getElementById('stats-relatorio');
     const total = lista.length;
-    const totalItens = lista.reduce((a, p) => a + (p.gondola || 0) + (p.estoque || 0), 0);
-    const totalValor = lista.reduce((a, p) => a + ((p.preco || 0) * ((p.gondola || 0) + (p.estoque || 0))), 0);
+    const totalItens = lista.reduce((a, p) => {
+      const cores = p.cores || [];
+      return a + cores.reduce((sum, c) => sum + (c.gondola || 0) + (c.estoque || 0), 0);
+    }, 0);
+    const totalValor = lista.reduce((a, p) => {
+      const cores = p.cores || [];
+      return a + ((p.preco || 0) * cores.reduce((sum, c) => sum + (c.gondola || 0) + (c.estoque || 0), 0));
+    }, 0);
 
     stats.innerHTML = `
       <div class="stat-box"><div class="num">${total}</div><div class="lbl">Produtos</div></div>
@@ -411,9 +418,7 @@ function gerarRelatorio() {
         <td>${p.ref}</td>
         <td>${p.nome}</td>
         <td>${p.tipo}</td>
-        <td>${(p.cores || []).join(', ')}</td>
-        <td>${p.gondola || 0}</td>
-        <td>${p.estoque || 0}</td>
+        <td>${(p.cores || []).map(c => `${c.nome} (${c.gondola}G/${c.estoque}E)`).join(', ')}</td>
         <td>R$ ${(p.preco || 0).toFixed(2).replace('.', ',')}</td>
       </tr>
     `).join('');
