@@ -12,117 +12,66 @@
   --text:#2d2d2d;--muted:#9e8575;--bg:#fdf5f7;
 }
 body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:16px;}
-
 .container{max-width:1200px;margin:0 auto;}
-header{background:linear-gradient(135deg,var(--dark),var(--rose-dark));color:#fff;
-  padding:24px;border-radius:16px;margin-bottom:24px;box-shadow:0 8px 24px rgba(0,0,0,.2);}
+header{background:linear-gradient(135deg,var(--dark),var(--rose-dark));color:#fff;padding:24px;border-radius:16px;margin-bottom:24px;box-shadow:0 8px 24px rgba(0,0,0,.2);}
 .h-title{font-size:32px;font-weight:900;letter-spacing:2px;margin-bottom:4px;}
 .h-sub{font-size:13px;opacity:.85;}
-
 .tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
-.tab-btn{padding:12px 20px;border:none;border-radius:10px;background:#fff;
-  color:var(--rose-dark);font-weight:700;cursor:pointer;font-size:14px;
-  transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.tab-btn{padding:12px 20px;border:none;border-radius:10px;background:#fff;color:var(--rose-dark);font-weight:700;cursor:pointer;font-size:14px;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.06);}
 .tab-btn.active{background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;}
 .tab-btn:hover{transform:translateY(-2px);}
-
 .tab-content{display:none;}
 .tab-content.active{display:block;}
-
-.card{background:#fff;border-radius:16px;padding:24px;
-  box-shadow:0 4px 20px rgba(0,0,0,.08);margin-bottom:20px;}
-.card h2{font-size:18px;font-weight:700;color:var(--brown);margin-bottom:16px;
-  padding-bottom:12px;border-bottom:2px solid var(--rose-light);}
-
+.card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.08);margin-bottom:20px;}
+.card h2{font-size:18px;font-weight:700;color:var(--brown);margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--rose-light);}
 .form-group{margin-bottom:16px;}
-.form-group label{display:block;font-size:12px;font-weight:700;
-  color:var(--rose-dark);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;}
-input[type=text],input[type=number],input[type=date],select,textarea{
-  width:100%;padding:11px 14px;border:1.5px solid #e0d0d5;border-radius:10px;
-  font-size:14px;color:var(--text);background:#fdf5f7;transition:border-color .2s;
-  font-family:inherit;}
+.form-group label{display:block;font-size:12px;font-weight:700;color:var(--rose-dark);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px;}
+input[type=text],input[type=number],input[type=date],select,textarea{width:100%;padding:11px 14px;border:1.5px solid #e0d0d5;border-radius:10px;font-size:14px;color:var(--text);background:#fdf5f7;transition:border-color .2s;font-family:inherit;}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);background:#fff;}
-
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
 @media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr;}}
-
-.foto-upload{border:2px dashed #e0c0cc;border-radius:12px;padding:24px;
-  text-align:center;cursor:pointer;background:#fdf5f7;transition:all .2s;}
+.foto-upload{border:2px dashed #e0c0cc;border-radius:12px;padding:24px;text-align:center;cursor:pointer;background:#fdf5f7;transition:all .2s;}
 .foto-upload:hover{border-color:var(--rose);background:#fff;}
 .foto-upload input{display:none;}
 .foto-icon{font-size:32px;margin-bottom:8px;}
 .foto-text{font-size:12px;color:var(--muted);}
-#preview-img{width:100%;max-height:200px;object-fit:cover;border-radius:10px;
-  margin-top:12px;display:none;}
-
+#preview-img{width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin-top:12px;display:none;}
 .cores-container{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
-.cor-item{display:flex;align-items:center;gap:8px;background:#fff;
-  border:1.5px solid #e0d0d5;border-radius:8px;padding:8px 12px;font-size:13px;}
-.cor-item button{background:#dc3545;color:#fff;border:none;border-radius:4px;
-  padding:2px 8px;cursor:pointer;font-size:11px;font-weight:700;}
+.cor-item{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #e0d0d5;border-radius:8px;padding:8px 12px;font-size:13px;}
+.cor-item button{background:#dc3545;color:#fff;border:none;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:11px;font-weight:700;}
 .cor-input{display:flex;gap:8px;align-items:flex-end;}
 .cor-input input{flex:1;}
-.cor-input button{background:linear-gradient(135deg,var(--rose),var(--rose-dark));
-  color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;
-  font-weight:700;font-size:13px;}
-
-.btn-primary{width:100%;padding:13px;border:none;border-radius:10px;
-  background:linear-gradient(135deg,var(--rose),var(--rose-dark));
-  color:#fff;font-size:15px;font-weight:700;cursor:pointer;
-  box-shadow:0 4px 14px rgba(201,116,138,.35);transition:transform .1s;}
+.cor-input button{background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;}
+.btn-primary{width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(201,116,138,.35);transition:transform .1s;}
 .btn-primary:hover{transform:translateY(-2px);}
-
 .produtos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
-.produto-card{background:#fff;border-radius:12px;padding:16px;
-  box-shadow:0 2px 12px rgba(0,0,0,.08);border-left:4px solid var(--rose);}
+.produto-card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 12px rgba(0,0,0,.08);border-left:4px solid var(--rose);}
 .produto-card img{width:100%;height:160px;object-fit:cover;border-radius:8px;margin-bottom:12px;}
-.produto-card .no-img{width:100%;height:160px;background:var(--rose-light);
-  border-radius:8px;display:flex;align-items:center;justify-content:center;
-  font-size:48px;margin-bottom:12px;}
+.produto-card .no-img{width:100%;height:160px;background:var(--rose-light);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:48px;margin-bottom:12px;}
 .produto-card h3{font-size:14px;font-weight:700;margin-bottom:4px;}
 .produto-card .ref{font-size:11px;color:var(--muted);font-family:monospace;margin-bottom:8px;}
-.produto-card .tipo{display:inline-block;background:var(--rose-light);
-  color:var(--rose-dark);padding:2px 8px;border-radius:6px;font-size:10px;
-  font-weight:700;margin-bottom:8px;}
+.produto-card .tipo{display:inline-block;background:var(--rose-light);color:var(--rose-dark);padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px;}
 .produto-card .cores-list{font-size:11px;color:var(--muted);margin-bottom:8px;}
 .produto-card .preco{font-size:16px;font-weight:800;color:var(--rose-dark);margin-bottom:8px;}
 .produto-card .btns{display:flex;gap:6px;}
-.btn-sm{flex:1;padding:8px;border:none;border-radius:6px;font-size:12px;
-  font-weight:700;cursor:pointer;transition:all .2s;}
-.btn-edit{background:#007bff;color:#fff;}
+.btn-sm{flex:1;padding:8px;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
 .btn-delete{background:#dc3545;color:#fff;}
 .btn-sm:hover{transform:translateY(-1px);}
-
-.relatorio-filtros{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end;}
-.relatorio-filtros .form-group{margin-bottom:0;flex:1;min-width:150px;}
-.relatorio-filtros button{background:linear-gradient(135deg,var(--rose),var(--rose-dark));
-  color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;
-  font-weight:700;font-size:13px;}
-
-.relatorio-table{width:100%;border-collapse:collapse;font-size:13px;}
-.relatorio-table th{background:var(--rose-light);color:var(--rose-dark);
-  padding:12px;text-align:left;font-weight:700;border-bottom:2px solid var(--rose);}
-.relatorio-table td{padding:12px;border-bottom:1px solid #f0e0e5;}
-.relatorio-table tr:hover td{background:#fdf5f7;}
-
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
-.stat-box{background:linear-gradient(135deg,var(--rose-light),#fff);
-  border-left:4px solid var(--rose);border-radius:10px;padding:16px;text-align:center;}
+.stat-box{background:linear-gradient(135deg,var(--rose-light),#fff);border-left:4px solid var(--rose);border-radius:10px;padding:16px;text-align:center;}
 .stat-box .num{font-size:28px;font-weight:800;color:var(--rose-dark);}
 .stat-box .lbl{font-size:11px;color:var(--muted);margin-top:4px;text-transform:uppercase;}
-
 .empty{text-align:center;padding:40px 20px;color:var(--muted);}
 .empty-icon{font-size:48px;margin-bottom:12px;}
-
-.toast{position:fixed;bottom:24px;right:24px;background:var(--dark);color:#fff;
-  padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;
-  opacity:0;transform:translateY(8px);transition:all .3s;z-index:999;pointer-events:none;}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--dark);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;transform:translateY(8px);transition:all .3s;z-index:999;pointer-events:none;}
 .toast.show{opacity:1;transform:translateY(0);}
-
-.export-btn{background:#28a745;color:#fff;border:none;padding:10px 16px;
-  border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;margin-top:12px;}
-.export-btn:hover{opacity:.9;}
+.relatorio-filtros{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;align-items:flex-end;}
+.relatorio-filtros .form-group{margin-bottom:0;flex:1;min-width:150px;}
+.relatorio-table{width:100%;border-collapse:collapse;font-size:13px;}
+.relatorio-table th{background:var(--rose-light);color:var(--rose-dark);padding:12px;text-align:left;font-weight:700;border-bottom:2px solid var(--rose);}
+.relatorio-table td{padding:12px;border-bottom:1px solid #f0e0e5;}
+.relatorio-table tr:hover td{background:#fdf5f7;}
 </style>
 </head>
 <body>
@@ -149,7 +98,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
         <div class="foto-upload" onclick="document.getElementById('foto-input').click()">
           <input type="file" id="foto-input" accept="image/*" capture="environment"/>
           <div class="foto-icon">📷</div>
-          <div class="foto-text">Clique para adicionar foto (câmera do celular)</div>
+          <div class="foto-text">Clique para adicionar foto</div>
           <img id="preview-img" alt=""/>
         </div>
       </div>
@@ -252,7 +201,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
       </div>
 
       <div class="stats-grid" id="stats-produtos"></div>
-
       <div class="produtos-grid" id="produtos-grid"></div>
       <div id="produtos-empty" class="empty" style="display:none;">
         <div class="empty-icon">📦</div>
@@ -265,31 +213,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
   <div id="relatorio" class="tab-content">
     <div class="card">
       <h2>📊 Relatório de Produtos</h2>
-
-      <div class="relatorio-filtros">
-        <div class="form-group" style="flex:1;min-width:150px;">
-          <label>Tipo</label>
-          <select id="rel-tipo" onchange="gerarRelatorio()">
-            <option value="">Todos</option>
-            <option>Bijuteria</option>
-            <option>Prata 925</option>
-            <option>Semijoia</option>
-            <option>Bolsa</option>
-            <option>Óculos</option>
-            <option>Relógios</option>
-          </select>
-        </div>
-        <div class="form-group" style="flex:1;min-width:150px;">
-          <label>Período</label>
-          <select id="rel-periodo" onchange="gerarRelatorio()">
-            <option value="">Todos</option>
-            <option value="hoje">Hoje</option>
-            <option value="semana">Última Semana</option>
-            <option value="mes">Este Mês</option>
-          </select>
-        </div>
-        <button type="button" onclick="exportarCSV()" class="export-btn">⬇️ Exportar CSV</button>
-      </div>
 
       <div class="stats-grid" id="stats-relatorio"></div>
 
@@ -327,7 +250,8 @@ const firebaseConfig = {
   projectId: "checkin-4760f",
   storageBucket: "checkin-4760f.firebasestorage.app",
   messagingSenderId: "207981324873",
-  appId: "1:207981324873:web:00ccce2c26033b3f966d98"
+  appId: "1:207981324873:web:00ccce2c26033b3f966d98",
+  databaseURL: "https://checkin-4760f-default-rtdb.firebaseio.com"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -413,47 +337,21 @@ async function registrarProduto() {
   const alerta = parseInt(document.getElementById('f-alerta').value) || 5;
   const obs = document.getElementById('f-obs').value.trim();
 
-  if (!nome) {
-    toast('⚠️ Informe o nome do produto');
-    return;
-  }
-  if (!ref) {
-    toast('⚠️ Informe o código/referência');
-    return;
-  }
-  if (!tipo) {
-    toast('⚠️ Selecione o tipo');
-    return;
-  }
-  if (coresTemp.length === 0) {
-    toast('⚠️ Adicione pelo menos uma cor');
-    return;
-  }
-  if (gondola === 0 && estoque === 0) {
-    toast('⚠️ Informe uma quantidade');
-    return;
-  }
+  if (!nome) { toast('⚠️ Informe o nome'); return; }
+  if (!ref) { toast('⚠️ Informe o código'); return; }
+  if (!tipo) { toast('⚠️ Selecione o tipo'); return; }
+  if (coresTemp.length === 0) { toast('⚠️ Adicione uma cor'); return; }
+  if (gondola === 0 && estoque === 0) { toast('⚠️ Informe uma quantidade'); return; }
 
   const produto = {
     data: new Date().toISOString(),
-    nome: nome,
-    ref: ref,
-    tipo: tipo,
-    fornecedor: forn,
-    custo: custo,
-    preco: preco,
-    gondola: gondola,
-    estoque: estoque,
-    alerta: alerta,
-    obs: obs,
+    nome, ref, tipo, forn, custo, preco, gondola, estoque, alerta, obs,
     cores: coresTemp,
     foto: fotoB64 || null
   };
 
   try {
     await db.ref('produtos').push(produto);
-
-    // Limpar formulário
     document.getElementById('f-nome').value = '';
     document.getElementById('f-ref').value = '';
     document.getElementById('f-tipo').value = '';
@@ -469,11 +367,9 @@ async function registrarProduto() {
     coresTemp = [];
     renderCores();
     fotoB64 = null;
-
-    toast('✅ Produto registrado com sucesso!');
+    toast('✅ Produto registrado!');
   } catch (err) {
-    console.error('Erro:', err);
-    toast('❌ Erro ao registrar: ' + err.message);
+    toast('❌ Erro: ' + err.message);
   }
 }
 
@@ -484,16 +380,10 @@ function renderProdutos() {
 
   db.ref('produtos').once('value', (snapshot) => {
     const dados = snapshot.val();
-    let lista = dados ? Object.entries(dados).map(([key, val]) => ({
-      firebaseId: key,
-      ...val
-    })) : [];
+    let lista = dados ? Object.entries(dados).map(([key, val]) => ({firebaseId: key, ...val})) : [];
 
     if (tipo) lista = lista.filter(p => p.tipo === tipo);
-    if (busca) lista = lista.filter(p => 
-      p.nome.toLowerCase().includes(busca) || 
-      p.ref.toLowerCase().includes(busca)
-    );
+    if (busca) lista = lista.filter(p => p.nome.toLowerCase().includes(busca) || p.ref.toLowerCase().includes(busca));
 
     const stats = document.getElementById('stats-produtos');
     const grid = document.getElementById('produtos-grid');
@@ -512,18 +402,9 @@ function renderProdutos() {
     const totalValor = lista.reduce((a, p) => a + (p.preco || 0) * (p.gondola + p.estoque), 0);
 
     stats.innerHTML = `
-      <div class="stat-box">
-        <div class="num">${total}</div>
-        <div class="lbl">Produtos</div>
-      </div>
-      <div class="stat-box">
-        <div class="num">${totalItens}</div>
-        <div class="lbl">Itens</div>
-      </div>
-      <div class="stat-box">
-        <div class="num">${moeda(totalValor)}</div>
-        <div class="lbl">Valor Total</div>
-      </div>`;
+      <div class="stat-box"><div class="num">${total}</div><div class="lbl">Produtos</div></div>
+      <div class="stat-box"><div class="num">${totalItens}</div><div class="lbl">Itens</div></div>
+      <div class="stat-box"><div class="num">${moeda(totalValor)}</div><div class="lbl">Valor Total</div></div>`;
 
     grid.innerHTML = lista.map(p => `
       <div class="produto-card">
@@ -533,11 +414,9 @@ function renderProdutos() {
         <div class="tipo">${p.tipo}</div>
         <div class="cores-list">🎨 ${p.cores.join(', ')}</div>
         <div class="preco">${moeda(p.preco)}</div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">
-          🛒 ${p.gondola} | 📦 ${p.estoque}
-        </div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">🛒 ${p.gondola} | 📦 ${p.estoque}</div>
         <div class="btns">
-          <button class="btn-sm btn-delete" type="button" onclick="deletarProduto('${p.firebaseId}')">🗑️ Deletar</button>
+          <button class="btn-sm btn-delete" onclick="deletarProduto('${p.firebaseId}')">🗑️ Deletar</button>
         </div>
       </div>
     `).join('');
@@ -545,10 +424,10 @@ function renderProdutos() {
 }
 
 async function deletarProduto(id) {
-  if (!confirm('Tem certeza que deseja deletar este produto?')) return;
+  if (!confirm('Deletar este produto?')) return;
   try {
     await db.ref(`produtos/${id}`).remove();
-    toast('✅ Produto deletado!');
+    toast('✅ Deletado!');
     renderProdutos();
   } catch (err) {
     toast('❌ Erro ao deletar');
@@ -557,32 +436,9 @@ async function deletarProduto(id) {
 
 // ══════════ RELATÓRIO ══════════
 function gerarRelatorio() {
-  const tipo = document.getElementById('rel-tipo').value;
-  const periodo = document.getElementById('rel-periodo').value;
-
   db.ref('produtos').once('value', (snapshot) => {
     const dados = snapshot.val();
-    let lista = dados ? Object.entries(dados).map(([key, val]) => ({
-      firebaseId: key,
-      ...val
-    })) : [];
-
-    if (tipo) lista = lista.filter(p => p.tipo === tipo);
-
-    if (periodo) {
-      const hoje = new Date();
-      const dataFiltro = new Date();
-      if (periodo === 'hoje') {
-        dataFiltro.setHours(0, 0, 0, 0);
-        lista = lista.filter(p => new Date(p.data) >= dataFiltro);
-      } else if (periodo === 'semana') {
-        dataFiltro.setDate(dataFiltro.getDate() - 7);
-        lista = lista.filter(p => new Date(p.data) >= dataFiltro);
-      } else if (periodo === 'mes') {
-        dataFiltro.setMonth(dataFiltro.getMonth() - 1);
-        lista = lista.filter(p => new Date(p.data) >= dataFiltro);
-      }
-    }
+    let lista = dados ? Object.entries(dados).map(([key, val]) => ({firebaseId: key, ...val})) : [];
 
     const stats = document.getElementById('stats-relatorio');
     const total = lista.length;
@@ -590,7 +446,26 @@ function gerarRelatorio() {
     const totalValor = lista.reduce((a, p) => a + (p.preco || 0) * (p.gondola + p.estoque), 0);
 
     stats.innerHTML = `
-      <div class="stat-box">
-        <div class="num">${total}</div>
-        <div class="lbl">Registros
+      <div class="stat-box"><div class="num">${total}</div><div class="lbl">Produtos</div></div>
+      <div class="stat-box"><div class="num">${totalItens}</div><div class="lbl">Itens</div></div>
+      <div class="stat-box"><div class="num">${moeda(totalValor)}</div><div class="lbl">Valor Total</div></div>`;
 
+    const tbody = document.getElementById('relatorio-tbody');
+    tbody.innerHTML = lista.map(p => `
+      <tr>
+        <td>${fmtData(p.data)}</td>
+        <td>${p.ref}</td>
+        <td>${p.nome}</td>
+        <td>${p.tipo}</td>
+        <td>${p.cores.join(', ')}</td>
+        <td>${p.gondola}</td>
+        <td>${p.estoque}</td>
+        <td>${moeda(p.preco)}</td>
+      </tr>
+    `).join('');
+  });
+}
+</script>
+
+</body>
+</html>
