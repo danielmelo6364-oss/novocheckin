@@ -54,9 +54,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 .produto-card .tipo{display:inline-block;background:var(--rose-light);color:var(--rose-dark);padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px;}
 .produto-card .preco{font-size:16px;font-weight:800;color:var(--rose-dark);margin-bottom:8px;}
 .cor-info{font-size:11px;color:var(--muted);margin-bottom:4px;padding:4px;background:var(--rose-light);border-radius:4px;}
-.btn-repor{background:#28a745;color:#fff;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;font-size:10px;font-weight:700;margin-right:4px;}
 .btn-delete{background:#dc3545;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;width:100%;}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax:150px,1fr);gap:12px;margin-bottom:16px;}
 .stat-box{background:linear-gradient(135deg,var(--rose-light),#fff);border-left:4px solid var(--rose);border-radius:10px;padding:16px;text-align:center;}
 .stat-box .num{font-size:28px;font-weight:800;color:var(--rose-dark);}
 .stat-box .lbl{font-size:11px;color:var(--muted);margin-top:4px;}
@@ -67,6 +66,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 .relatorio-table{width:100%;border-collapse:collapse;font-size:13px;}
 .relatorio-table th{background:var(--rose-light);color:var(--rose-dark);padding:12px;text-align:left;font-weight:700;border-bottom:2px solid var(--rose);}
 .relatorio-table td{padding:12px;border-bottom:1px solid #f0e0e5;}
+.foto-btns{display:flex;gap:8px;margin-top:12px;}
+.foto-btn{flex:1;padding:10px;border:none;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;}
+.btn-camera{background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;}
+.btn-galeria{background:#f0f0f0;color:var(--text);}
 </style>
 </head>
 <body>
@@ -90,11 +93,16 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 
       <div class="form-group">
         <label>Foto do Produto</label>
-        <div class="foto-upload" onclick="document.getElementById('foto-input').click()">
-          <input type="file" id="foto-input" accept="image/*"/>
+        <div class="foto-upload" onclick="abrirGaleria()">
           <div class="foto-icon">📷</div>
           <div class="foto-text">Clique para adicionar foto</div>
           <img id="preview-img" alt=""/>
+        </div>
+        <input type="file" id="foto-input" accept="image/*" style="display:none;"/>
+        <input type="file" id="foto-camera" accept="image/*" capture="environment" style="display:none;"/>
+        <div class="foto-btns">
+          <button type="button" class="foto-btn btn-camera" onclick="abrirCamera()">📷 Câmera</button>
+          <button type="button" class="foto-btn btn-galeria" onclick="abrirGaleria()">🖼️ Galeria</button>
         </div>
       </div>
 
@@ -196,10 +204,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 
 <div id="toast" class="toast"></div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
 
+<script>
 const firebaseConfig = {
   apiKey: "AIzaSyDnMsL-dhv3uM2tP3B-IcJUFHVo1MmoW2k",
   authDomain: "checkin-4760f.firebaseapp.com",
@@ -210,8 +218,8 @@ const firebaseConfig = {
   databaseURL: "https://checkin-4760f-default-rtdb.firebaseio.com"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
 let coresTemp = [];
 let fotoB64 = null;
@@ -234,7 +242,18 @@ function abrirAba(aba, e) {
   if (aba === 'historico') gerarHistorico();
 }
 
-document.getElementById('foto-input').addEventListener('change', function(e) {
+function abrirCamera() {
+  document.getElementById('foto-camera').click();
+}
+
+function abrirGaleria() {
+  document.getElementById('foto-input').click();
+}
+
+document.getElementById('foto-input').addEventListener('change', processarFoto);
+document.getElementById('foto-camera').addEventListener('change', processarFoto);
+
+function processarFoto(e) {
   const f = e.target.files[0];
   if (!f) return;
   const r = new FileReader();
@@ -242,11 +261,12 @@ document.getElementById('foto-input').addEventListener('change', function(e) {
     fotoB64 = ev.target.result;
     document.getElementById('preview-img').src = fotoB64;
     document.getElementById('preview-img').style.display = 'block';
+    toast('✅ Foto adicionada!');
   };
   r.readAsDataURL(f);
-});
+}
 
-window.adicionarCor = function() {
+function adicionarCor() {
   const cor = document.getElementById('cor-input').value.trim();
   if (!cor) { toast('⚠️ Digite uma cor'); return; }
   if (coresTemp.find(c => c.nome === cor)) { toast('⚠️ Cor já existe'); return; }
@@ -254,16 +274,16 @@ window.adicionarCor = function() {
   coresTemp.push({ nome: cor, gondola: 0, estoque: 0 });
   renderCores();
   document.getElementById('cor-input').value = '';
-};
+}
 
-window.removerCor = function(idx) {
+function removerCor(idx) {
   coresTemp.splice(idx, 1);
   renderCores();
-};
+}
 
-window.atualizarCorQtd = function(idx, campo, valor) {
+function atualizarCorQtd(idx, campo, valor) {
   coresTemp[idx][campo] = parseInt(valor) || 0;
-};
+}
 
 function renderCores() {
   const el = document.getElementById('cores-list');
@@ -287,7 +307,7 @@ function renderCores() {
   `).join('');
 }
 
-window.registrarProduto = async function() {
+async function registrarProduto() {
   const nome = document.getElementById('f-nome').value.trim();
   const ref = document.getElementById('f-ref').value.trim();
   const tipo = document.getElementById('f-tipo').value;
@@ -311,10 +331,10 @@ window.registrarProduto = async function() {
   };
 
   try {
-    const novoRef = await push(ref(db, 'produtos'), produto);
+    const novoRef = db.ref('produtos').push(produto);
 
     for (let cor of coresTemp) {
-      await push(ref(db, 'historico'), {
+      db.ref('historico').push({
         data: new Date().toISOString(),
         tipo: 'REGISTRO',
         produtoId: novoRef.key,
@@ -336,6 +356,7 @@ window.registrarProduto = async function() {
     document.getElementById('f-obs').value = '';
     document.getElementById('preview-img').style.display = 'none';
     document.getElementById('foto-input').value = '';
+    document.getElementById('foto-camera').value = '';
     coresTemp = [];
     renderCores();
     fotoB64 = null;
@@ -344,10 +365,10 @@ window.registrarProduto = async function() {
   } catch (err) {
     toast('❌ Erro: ' + err.message);
   }
-};
+}
 
 function renderProdutos() {
-  onValue(ref(db, 'produtos'), (snapshot) => {
+  db.ref('produtos').on('value', (snapshot) => {
     const dados = snapshot.val();
     let lista = dados ? Object.entries(dados).map(([key, val]) => ({firebaseId: key, ...val})) : [];
 
@@ -394,18 +415,18 @@ function renderProdutos() {
   });
 }
 
-window.deletarProduto = async function(id) {
+function deletarProduto(id) {
   if (!confirm('Deletar este produto?')) return;
   try {
-    await remove(ref(db, `produtos/${id}`));
+    db.ref(`produtos/${id}`).remove();
     toast('✅ Deletado!');
   } catch (err) {
     toast('❌ Erro ao deletar');
   }
-};
+}
 
 function gerarHistorico() {
-  onValue(ref(db, 'historico'), (snapshot) => {
+  db.ref('historico').on('value', (snapshot) => {
     const dados = snapshot.val();
     let lista = dados ? Object.entries(dados).map(([key, val]) => ({...val})) : [];
     lista.reverse();
