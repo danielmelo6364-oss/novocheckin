@@ -27,18 +27,22 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
 @media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr;}}
 .foto-upload{border:2px dashed #e0c0cc;border-radius:12px;padding:24px;text-align:center;cursor:pointer;background:#fdf5f7;}
-.foto-upload:hover{border-color:var(--rose);}
+.foto-upload:hover{border-color:var(--rose);background:#fff;}
 .foto-upload input{display:none;}
 .foto-icon{font-size:32px;margin-bottom:8px;}
 .foto-text{font-size:12px;color:var(--muted);}
 #preview-img{width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin-top:12px;display:none;}
-.cores-container{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;background:#fdf5f7;padding:16px;border-radius:10px;}
-.cor-item{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:flex-end;background:#fff;border:1.5px solid #e0d0d5;border-radius:8px;padding:12px;}
-.cor-item input{margin-bottom:0;}
-.cor-item button{background:#dc3545;color:#fff;border:none;border-radius:4px;padding:8px 12px;cursor:pointer;font-size:11px;font-weight:700;height:42px;}
-.cor-input{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:flex-end;}
-.cor-input input{margin-bottom:0;}
-.cor-input button{background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;height:42px;}
+.cores-container{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+.cor-item{background:#fff;border:1.5px solid #e0d0d5;border-radius:8px;padding:12px;font-size:13px;flex:1;min-width:200px;}
+.cor-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.cor-item-nome{font-weight:700;color:var(--rose-dark);}
+.cor-item button{background:#dc3545;color:#fff;border:none;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:11px;font-weight:700;}
+.cor-input{display:flex;gap:8px;align-items:flex-end;}
+.cor-input input{flex:1;}
+.cor-input button{background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;}
+.cor-qtd{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;}
+.cor-qtd input{font-size:12px;padding:8px;}
+.cor-qtd label{font-size:10px;color:var(--muted);margin-bottom:2px;}
 .btn-primary{width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;font-size:15px;font-weight:700;cursor:pointer;}
 .btn-primary:hover{opacity:.9;}
 .produtos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
@@ -48,9 +52,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 .produto-card h3{font-size:14px;font-weight:700;margin-bottom:4px;}
 .produto-card .ref{font-size:11px;color:var(--muted);margin-bottom:8px;}
 .produto-card .tipo{display:inline-block;background:var(--rose-light);color:var(--rose-dark);padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px;}
-.produto-card .cores-list{font-size:11px;color:var(--muted);margin-bottom:8px;max-height:60px;overflow-y:auto;}
 .produto-card .preco{font-size:16px;font-weight:800;color:var(--rose-dark);margin-bottom:8px;}
-.btn-delete{background:#dc3545;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;width:100%;}
+.cor-estoque{font-size:11px;color:var(--muted);margin-bottom:4px;padding:4px;background:var(--rose-light);border-radius:4px;}
+.btn-repor{background:#28a745;color:#fff;border:none;padding:6px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;margin-right:4px;}
+.btn-delete{background:#dc3545;color:#fff;border:none;padding:6px 10px;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;}
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
 .stat-box{background:linear-gradient(135deg,var(--rose-light),#fff);border-left:4px solid var(--rose);border-radius:10px;padding:16px;text-align:center;}
 .stat-box .num{font-size:28px;font-weight:800;color:var(--rose-dark);}
@@ -62,7 +67,15 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 .relatorio-table{width:100%;border-collapse:collapse;font-size:13px;}
 .relatorio-table th{background:var(--rose-light);color:var(--rose-dark);padding:12px;text-align:left;font-weight:700;border-bottom:2px solid var(--rose);}
 .relatorio-table td{padding:12px;border-bottom:1px solid #f0e0e5;}
-.cor-label{font-size:12px;font-weight:700;color:var(--rose-dark);margin-bottom:4px;text-transform:uppercase;}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;}
+.modal.show{display:flex;}
+.modal-content{background:#fff;border-radius:16px;padding:24px;max-width:400px;width:90%;}
+.modal-content h3{margin-bottom:16px;color:var(--brown);}
+.modal-content input{width:100%;margin-bottom:12px;}
+.modal-btns{display:flex;gap:8px;}
+.modal-btns button{flex:1;padding:10px;border:none;border-radius:8px;cursor:pointer;font-weight:700;}
+.btn-confirm{background:var(--rose);color:#fff;}
+.btn-cancel{background:#ccc;color:#000;}
 </style>
 </head>
 <body>
@@ -70,13 +83,13 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 <div class="container">
   <header>
     <div class="h-title">💎 GÉOR — Check-in de Produtos</div>
-    <div class="h-sub">Registre suas semijoias com variações de cores e quantidades</div>
+    <div class="h-sub">Registre variações de cores com estoque e gôndola</div>
   </header>
 
   <div class="tabs">
     <button class="tab-btn active" onclick="abrirAba('checkin', event)">📦 Check-in</button>
     <button class="tab-btn" onclick="abrirAba('produtos', event)">🗂️ Produtos</button>
-    <button class="tab-btn" onclick="abrirAba('relatorio', event)">📊 Relatório</button>
+    <button class="tab-btn" onclick="abrirAba('historico', event)">📜 Histórico</button>
   </div>
 
   <!-- ABA CHECK-IN -->
@@ -135,12 +148,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
       </div>
 
       <div class="form-group">
-        <label>Variações de Cores com Quantidades *</label>
+        <label>Variações de Cores com Estoque *</label>
         <div class="cores-container" id="cores-list"></div>
         <div class="cor-input">
-          <input type="text" id="cor-input" placeholder="Ex: Ouro"/>
-          <input type="number" id="cor-gondola" min="0" placeholder="Gôndola"/>
-          <input type="number" id="cor-estoque" min="0" placeholder="Estoque"/>
+          <input type="text" id="cor-input" placeholder="Ex: Ouro, Prata, Rose..."/>
           <button type="button" onclick="adicionarCor()">+ Adicionar</button>
         </div>
       </div>
@@ -167,26 +178,43 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
     </div>
   </div>
 
-  <!-- ABA RELATÓRIO -->
-  <div id="relatorio" class="tab-content">
+  <!-- ABA HISTÓRICO -->
+  <div id="historico" class="tab-content">
     <div class="card">
-      <h2>📊 Relatório</h2>
-      <div class="stats-grid" id="stats-relatorio"></div>
+      <h2>📜 Histórico de Movimentações</h2>
+      <div class="stats-grid" id="stats-historico"></div>
       <div style="overflow-x:auto;">
         <table class="relatorio-table">
           <thead>
             <tr>
-              <th>Data</th>
-              <th>Código</th>
+              <th>Data/Hora</th>
               <th>Produto</th>
+              <th>Cor</th>
               <th>Tipo</th>
-              <th>Cores</th>
-              <th>Preço</th>
+              <th>Quantidade</th>
+              <th>Gôndola</th>
+              <th>Estoque</th>
             </tr>
           </thead>
-          <tbody id="relatorio-tbody"></tbody>
+          <tbody id="historico-tbody"></tbody>
         </table>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE REPOSIÇÃO -->
+<div id="modal-repor" class="modal">
+  <div class="modal-content">
+    <h3>📦 Repor Gôndola</h3>
+    <div id="modal-info"></div>
+    <div class="form-group">
+      <label>Quantidade a Repor</label>
+      <input type="number" id="modal-qtd" min="1" placeholder="0"/>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-confirm" onclick="confirmarReposicao()">✅ Repor</button>
+      <button class="btn-cancel" onclick="fecharModal()">❌ Cancelar</button>
     </div>
   </div>
 </div>
@@ -195,7 +223,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+import { getDatabase, ref, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDnMsL-dhv3uM2tP3B-IcJUFHVo1MmoW2k",
@@ -212,6 +240,7 @@ const db = getDatabase(app);
 
 let coresTemp = [];
 let fotoB64 = null;
+let reposicaoAtual = null;
 
 function toast(msg) {
   const t = document.getElementById('toast');
@@ -228,7 +257,7 @@ function abrirAba(aba, e) {
   e.target.classList.add('active');
 
   if (aba === 'produtos') renderProdutos();
-  if (aba === 'relatorio') gerarRelatorio();
+  if (aba === 'historico') gerarHistorico();
 }
 
 // FOTO
@@ -244,21 +273,20 @@ document.getElementById('foto-input').addEventListener('change', function(e) {
   r.readAsDataURL(f);
 });
 
-// CORES
+// CORES COM ESTOQUE
 window.adicionarCor = function() {
   const cor = document.getElementById('cor-input').value.trim();
-  const gondola = parseInt(document.getElementById('cor-gondola').value) || 0;
-  const estoque = parseInt(document.getElementById('cor-estoque').value) || 0;
-
   if (!cor) { toast('⚠️ Digite uma cor'); return; }
   if (coresTemp.find(c => c.nome === cor)) { toast('⚠️ Cor já existe'); return; }
-  if (gondola === 0 && estoque === 0) { toast('⚠️ Informe uma quantidade'); return; }
 
-  coresTemp.push({ nome: cor, gondola, estoque });
+  coresTemp.push({
+    nome: cor,
+    gondola: 0,
+    estoque: 0
+  });
+
   renderCores();
   document.getElementById('cor-input').value = '';
-  document.getElementById('cor-gondola').value = '';
-  document.getElementById('cor-estoque').value = '';
 };
 
 window.removerCor = function(idx) {
@@ -266,20 +294,28 @@ window.removerCor = function(idx) {
   renderCores();
 };
 
+window.atualizarCorQtd = function(idx, campo, valor) {
+  coresTemp[idx][campo] = parseInt(valor) || 0;
+};
+
 function renderCores() {
   const el = document.getElementById('cores-list');
   el.innerHTML = coresTemp.map((cor, i) => `
     <div class="cor-item">
-      <div>
-        <div class="cor-label">${cor.nome}</div>
+      <div class="cor-item-header">
+        <div class="cor-item-nome">${cor.nome}</div>
+        <button type="button" onclick="removerCor(${i})">✕</button>
       </div>
-      <div>
-        <div class="cor-label">Gôndola: ${cor.gondola}</div>
+      <div class="cor-qtd">
+        <div>
+          <label>Gôndola</label>
+          <input type="number" min="0" value="${cor.gondola}" onchange="atualizarCorQtd(${i}, 'gondola', this.value)"/>
+        </div>
+        <div>
+          <label>Estoque</label>
+          <input type="number" min="0" value="${cor.estoque}" onchange="atualizarCorQtd(${i}, 'estoque', this.value)"/>
+        </div>
       </div>
-      <div>
-        <div class="cor-label">Estoque: ${cor.estoque}</div>
-      </div>
-      <button type="button" onclick="removerCor(${i})">✕</button>
     </div>
   `).join('');
 }
@@ -304,12 +340,27 @@ window.registrarProduto = async function() {
     custo: parseFloat(document.getElementById('f-custo').value) || 0,
     preco: parseFloat(document.getElementById('f-preco').value) || 0,
     obs: document.getElementById('f-obs').value.trim(),
-    cores: [...coresTemp],
+    cores: coresTemp.map(c => ({...c})),
     foto: fotoB64 || null
   };
 
   try {
-    await push(ref(db, 'produtos'), produto);
+    const novoRef = await push(ref(db, 'produtos'), produto);
+
+    // Registrar no histórico
+    for (let cor of coresTemp) {
+      await push(ref(db, 'historico'), {
+        data: new Date().toISOString(),
+        tipo: 'REGISTRO',
+        produtoId: novoRef.key,
+        produtoNome: nome,
+        produtoRef: ref,
+        cor: cor.nome,
+        quantidade: cor.gondola + cor.estoque,
+        gondola: cor.gondola,
+        estoque: cor.estoque
+      });
+    }
 
     document.getElementById('f-nome').value = '';
     document.getElementById('f-ref').value = '';
@@ -349,14 +400,8 @@ function renderProdutos() {
 
     empty.style.display = 'none';
     const total = lista.length;
-    const totalItens = lista.reduce((a, p) => {
-      const cores = p.cores || [];
-      return a + cores.reduce((sum, c) => sum + (c.gondola || 0) + (c.estoque || 0), 0);
-    }, 0);
-    const totalValor = lista.reduce((a, p) => {
-      const cores = p.cores || [];
-      return a + ((p.preco || 0) * cores.reduce((sum, c) => sum + (c.gondola || 0) + (c.estoque || 0), 0));
-    }, 0);
+    const totalItens = lista.reduce((a, p) => a + (p.cores || []).reduce((b, c) => b + (c.gondola || 0) + (c.estoque || 0), 0), 0);
+    const totalValor = lista.reduce((a, p) => a + ((p.preco || 0) * ((p.cores || []).reduce((b, c) => b + (c.gondola || 0) + (c.estoque || 0), 0))), 0);
 
     stats.innerHTML = `
       <div class="stat-box"><div class="num">${total}</div><div class="lbl">Produtos</div></div>
@@ -369,15 +414,77 @@ function renderProdutos() {
         <h3>${p.nome}</h3>
         <div class="ref">${p.ref}</div>
         <div class="tipo">${p.tipo}</div>
-        <div class="cores-list">
-          ${(p.cores || []).map(c => `🎨 ${c.nome}: ${c.gondola}G / ${c.estoque}E`).join('<br>')}
-        </div>
         <div class="preco">R$ ${(p.preco || 0).toFixed(2).replace('.', ',')}</div>
-        <button class="btn-delete" onclick="deletarProduto('${p.firebaseId}')">🗑️ Deletar</button>
+
+        <div style="margin-top:12px;border-top:1px solid #f0e0e5;padding-top:12px;">
+          ${(p.cores || []).map((cor, i) => `
+            <div class="cor-estoque">
+              <strong>${cor.nome}</strong> | 🛒 ${cor.gondola || 0} | 📦 ${cor.estoque || 0}
+              <button class="btn-repor" onclick="abrirModalRepor('${p.firebaseId}', ${i}, '${cor.nome}', ${cor.estoque})">Repor</button>
+            </div>
+          `).join('')}
+        </div>
+
+        <button class="btn-delete" style="width:100%;margin-top:8px;" onclick="deletarProduto('${p.firebaseId}')">🗑️ Deletar</button>
       </div>
     `).join('');
   });
 }
+
+window.abrirModalRepor = function(produtoId, corIdx, corNome, estoque) {
+  reposicaoAtual = { produtoId, corIdx, corNome, estoque };
+  document.getElementById('modal-info').innerHTML = `
+    <p><strong>Produto:</strong> ${corNome}</p>
+    <p><strong>Disponível em estoque:</strong> ${estoque} unidades</p>
+  `;
+  document.getElementById('modal-qtd').value = '';
+  document.getElementById('modal-repor').classList.add('show');
+};
+
+window.fecharModal = function() {
+  document.getElementById('modal-repor').classList.remove('show');
+  reposicaoAtual = null;
+};
+
+window.confirmarReposicao = async function() {
+  if (!reposicaoAtual) return;
+
+  const qtd = parseInt(document.getElementById('modal-qtd').value);
+  if (!qtd || qtd <= 0) { toast('⚠️ Informe uma quantidade'); return; }
+  if (qtd > reposicaoAtual.estoque) { toast('⚠️ Quantidade maior que o estoque'); return; }
+
+  try {
+    // Atualizar produto
+    const produtoRef = ref(db, `produtos/${reposicaoAtual.produtoId}`);
+    onValue(produtoRef, async (snapshot) => {
+      const produto = snapshot.val();
+      const cores = [...produto.cores];
+      cores[reposicaoAtual.corIdx].gondola += qtd;
+      cores[reposicaoAtual.corIdx].estoque -= qtd;
+
+      await update(produtoRef, { cores });
+
+      // Registrar no histórico
+      await push(ref(db, 'historico'), {
+        data: new Date().toISOString(),
+        tipo: 'REPOSIÇÃO',
+        produtoId: reposicaoAtual.produtoId,
+        produtoNome: produto.nome,
+        produtoRef: produto.ref,
+        cor: reposicaoAtual.corNome,
+        quantidade: qtd,
+        gondola: cores[reposicaoAtual.corIdx].gondola,
+        estoque: cores[reposicaoAtual.corIdx].estoque
+      });
+
+      toast('✅ Reposição registrada!');
+      fecharModal();
+      renderProdutos();
+    }, { onlyOnce: true });
+  } catch (err) {
+    toast('❌ Erro: ' + err.message);
+  }
+};
 
 window.deletarProduto = async function(id) {
   if (!confirm('Deletar este produto?')) return;
@@ -389,42 +496,32 @@ window.deletarProduto = async function(id) {
   }
 };
 
-// RELATÓRIO
-function gerarRelatorio() {
-  onValue(ref(db, 'produtos'), (snapshot) => {
+// HISTÓRICO
+function gerarHistorico() {
+  onValue(ref(db, 'historico'), (snapshot) => {
     const dados = snapshot.val();
-    let lista = dados ? Object.entries(dados).map(([key, val]) => ({firebaseId: key, ...val})) : [];
+    let lista = dados ? Object.entries(dados).map(([key, val]) => ({...val})) : [];
+    lista.reverse();
 
-    const stats = document.getElementById('stats-relatorio');
-    const total = lista.length;
-    const totalItens = lista.reduce((a, p) => {
-      const cores = p.cores || [];
-      return a + cores.reduce((sum, c) => sum + (c.gondola || 0) + (c.estoque || 0), 0);
-    }, 0);
-    const totalValor = lista.reduce((a, p) => {
-      const cores = p.cores || [];
-      return a + ((p.preco || 0) * cores.reduce((sum, c) => sum + (c.gondola || 0) + (c.estoque || 0), 0));
-    }, 0);
+    const stats = document.getElementById('stats-historico');
+    const registros = lista.length;
+    const reposicoes = lista.filter(h => h.tipo === 'REPOSIÇÃO').length;
 
     stats.innerHTML = `
-      <div class="stat-box"><div class="num">${total}</div><div class="lbl">Produtos</div></div>
-      <div class="stat-box"><div class="num">${totalItens}</div><div class="lbl">Itens</div></div>
-      <div class="stat-box"><div class="num">R$ ${totalValor.toFixed(2).replace('.', ',')}</div><div class="lbl">Valor</div></div>`;
+      <div class="stat-box"><div class="num">${registros}</div><div class="lbl">Movimentações</div></div>
+      <div class="stat-box"><div class="num">${reposicoes}</div><div class="lbl">Reposições</div></div>`;
 
-    const tbody = document.getElementById('relatorio-tbody');
-    tbody.innerHTML = lista.map(p => `
+    const tbody = document.getElementById('historico-tbody');
+    tbody.innerHTML = lista.map(h => `
       <tr>
-        <td>${new Date(p.data).toLocaleDateString('pt-BR')}</td>
-        <td>${p.ref}</td>
-        <td>${p.nome}</td>
-        <td>${p.tipo}</td>
-        <td>${(p.cores || []).map(c => `${c.nome} (${c.gondola}G/${c.estoque}E)`).join(', ')}</td>
-        <td>R$ ${(p.preco || 0).toFixed(2).replace('.', ',')}</td>
+        <td>${new Date(h.data).toLocaleString('pt-BR')}</td>
+        <td>${h.produtoNome}</td>
+        <td>${h.cor}</td>
+        <td>${h.tipo}</td>
+        <td>${h.quantidade}</td>
+        <td>${h.gondola}</td>
+        <td>${h.estoque}</td>
       </tr>
     `).join('');
-  });
-}
-</script>
 
-</body>
-</html>
+
