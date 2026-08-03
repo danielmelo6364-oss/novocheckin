@@ -123,12 +123,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 .export-btn{background:#28a745;color:#fff;border:none;padding:10px 16px;
   border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;margin-top:12px;}
 .export-btn:hover{opacity:.9;}
-
-.loading{display:none;text-align:center;padding:20px;}
-.loading.show{display:block;}
-.spinner{border:3px solid var(--rose-light);border-top:3px solid var(--rose);
-  border-radius:50%;width:30px;height:30px;animation:spin .8s linear infinite;margin:0 auto;}
-@keyframes spin{0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
@@ -205,7 +199,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
         <div class="cores-container" id="cores-list"></div>
         <div class="cor-input">
           <input type="text" id="cor-input" placeholder="Ex: Ouro, Prata, Rose..."/>
-          <button onclick="adicionarCor()">+ Adicionar</button>
+          <button type="button" onclick="adicionarCor()">+ Adicionar</button>
         </div>
       </div>
 
@@ -229,7 +223,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
         <textarea id="f-obs" placeholder="Tamanho, coleção, material..." style="min-height:80px;"></textarea>
       </div>
 
-      <button class="btn-primary" onclick="registrarProduto()">✅ Registrar Check-in</button>
+      <button class="btn-primary" type="button" onclick="registrarProduto()">✅ Registrar Check-in</button>
     </div>
   </div>
 
@@ -255,11 +249,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
           <label>Buscar</label>
           <input type="text" id="filtro-busca" placeholder="Nome ou código..." onkeyup="renderProdutos()"/>
         </div>
-      </div>
-
-      <div class="loading" id="loading-produtos">
-        <div class="spinner"></div>
-        <p>Carregando produtos...</p>
       </div>
 
       <div class="stats-grid" id="stats-produtos"></div>
@@ -299,7 +288,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
             <option value="mes">Este Mês</option>
           </select>
         </div>
-        <button onclick="exportarCSV()" class="export-btn">⬇️ Exportar CSV</button>
+        <button type="button" onclick="exportarCSV()" class="export-btn">⬇️ Exportar CSV</button>
       </div>
 
       <div class="stats-grid" id="stats-relatorio"></div>
@@ -338,8 +327,7 @@ const firebaseConfig = {
   projectId: "checkin-4760f",
   storageBucket: "checkin-4760f.firebasestorage.app",
   messagingSenderId: "207981324873",
-  appId: "1:207981324873:web:00ccce2c26033b3f966d98",
-  measurementId: "G-EGJN1N6MX9"
+  appId: "1:207981324873:web:00ccce2c26033b3f966d98"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -349,7 +337,6 @@ let coresTemp = [];
 const moeda = v => 'R$ ' + parseFloat(v || 0).toFixed(2).replace('.', ',');
 const fmtData = s => new Date(s).toLocaleDateString('pt-BR');
 let fotoB64 = null;
-let produtosFiltrados = [];
 
 function toast(msg, dur = 3000) {
   const t = document.getElementById('toast');
@@ -385,8 +372,14 @@ document.getElementById('foto-input').addEventListener('change', function(e) {
 // ══════════ CORES ══════════
 function adicionarCor() {
   const cor = document.getElementById('cor-input').value.trim();
-  if (!cor) return toast('⚠️ Digite uma cor');
-  if (coresTemp.includes(cor)) return toast('⚠️ Cor já adicionada');
+  if (!cor) {
+    toast('⚠️ Digite uma cor');
+    return;
+  }
+  if (coresTemp.includes(cor)) {
+    toast('⚠️ Cor já adicionada');
+    return;
+  }
   coresTemp.push(cor);
   renderCores();
   document.getElementById('cor-input').value = '';
@@ -402,7 +395,7 @@ function renderCores() {
   el.innerHTML = coresTemp.map((cor, i) => `
     <div class="cor-item">
       ${cor}
-      <button onclick="removerCor(${i})">✕</button>
+      <button type="button" onclick="removerCor(${i})">✕</button>
     </div>
   `).join('');
 }
@@ -420,16 +413,39 @@ async function registrarProduto() {
   const alerta = parseInt(document.getElementById('f-alerta').value) || 5;
   const obs = document.getElementById('f-obs').value.trim();
 
-  if (!nome) return toast('⚠️ Informe o nome do produto');
-  if (!ref) return toast('⚠️ Informe o código/referência');
-  if (!tipo) return toast('⚠️ Selecione o tipo');
-  if (coresTemp.length === 0) return toast('⚠️ Adicione pelo menos uma cor');
-  if (gondola === 0 && estoque === 0) return toast('⚠️ Informe uma quantidade');
+  if (!nome) {
+    toast('⚠️ Informe o nome do produto');
+    return;
+  }
+  if (!ref) {
+    toast('⚠️ Informe o código/referência');
+    return;
+  }
+  if (!tipo) {
+    toast('⚠️ Selecione o tipo');
+    return;
+  }
+  if (coresTemp.length === 0) {
+    toast('⚠️ Adicione pelo menos uma cor');
+    return;
+  }
+  if (gondola === 0 && estoque === 0) {
+    toast('⚠️ Informe uma quantidade');
+    return;
+  }
 
   const produto = {
     data: new Date().toISOString(),
-    nome, ref, tipo, forn, custo, preco,
-    gondola, estoque, alerta, obs,
+    nome: nome,
+    ref: ref,
+    tipo: tipo,
+    fornecedor: forn,
+    custo: custo,
+    preco: preco,
+    gondola: gondola,
+    estoque: estoque,
+    alerta: alerta,
+    obs: obs,
     cores: coresTemp,
     foto: fotoB64 || null
   };
@@ -437,6 +453,7 @@ async function registrarProduto() {
   try {
     await db.ref('produtos').push(produto);
 
+    // Limpar formulário
     document.getElementById('f-nome').value = '';
     document.getElementById('f-ref').value = '';
     document.getElementById('f-tipo').value = '';
@@ -456,15 +473,12 @@ async function registrarProduto() {
     toast('✅ Produto registrado com sucesso!');
   } catch (err) {
     console.error('Erro:', err);
-    toast('❌ Erro ao registrar');
+    toast('❌ Erro ao registrar: ' + err.message);
   }
 }
 
 // ══════════ RENDER PRODUTOS ══════════
 function renderProdutos() {
-  const loading = document.getElementById('loading-produtos');
-  loading.classList.add('show');
-
   const tipo = document.getElementById('filtro-tipo').value;
   const busca = document.getElementById('filtro-busca').value.toLowerCase();
 
@@ -480,9 +494,6 @@ function renderProdutos() {
       p.nome.toLowerCase().includes(busca) || 
       p.ref.toLowerCase().includes(busca)
     );
-
-    produtosFiltrados = lista;
-    loading.classList.remove('show');
 
     const stats = document.getElementById('stats-produtos');
     const grid = document.getElementById('produtos-grid');
@@ -526,16 +537,11 @@ function renderProdutos() {
           🛒 ${p.gondola} | 📦 ${p.estoque}
         </div>
         <div class="btns">
-          <button class="btn-sm btn-edit" onclick="editarProduto('${p.firebaseId}')">✏️ Editar</button>
-          <button class="btn-sm btn-delete" onclick="deletarProduto('${p.firebaseId}')">🗑️ Deletar</button>
+          <button class="btn-sm btn-delete" type="button" onclick="deletarProduto('${p.firebaseId}')">🗑️ Deletar</button>
         </div>
       </div>
     `).join('');
   });
-}
-
-function editarProduto(id) {
-  toast('⏳ Funcionalidade em desenvolvimento');
 }
 
 async function deletarProduto(id) {
@@ -566,6 +572,25 @@ function gerarRelatorio() {
     if (periodo) {
       const hoje = new Date();
       const dataFiltro = new Date();
-      if (periodo === 'hoje') dataFiltro.setHours(0, 0, 0, 0);
+      if (periodo === 'hoje') {
+        dataFiltro.setHours(0, 0, 0, 0);
+        lista = lista.filter(p => new Date(p.data) >= dataFiltro);
+      } else if (periodo === 'semana') {
+        dataFiltro.setDate(dataFiltro.getDate() - 7);
+        lista = lista.filter(p => new Date(p.data) >= dataFiltro);
+      } else if (periodo === 'mes') {
+        dataFiltro.setMonth(dataFiltro.getMonth() - 1);
+        lista = lista.filter(p => new Date(p.data) >= dataFiltro);
+      }
+    }
 
+    const stats = document.getElementById('stats-relatorio');
+    const total = lista.length;
+    const totalItens = lista.reduce((a, p) => a + p.gondola + p.estoque, 0);
+    const totalValor = lista.reduce((a, p) => a + (p.preco || 0) * (p.gondola + p.estoque), 0);
+
+    stats.innerHTML = `
+      <div class="stat-box">
+        <div class="num">${total}</div>
+        <div class="lbl">Registros
 
