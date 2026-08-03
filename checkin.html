@@ -54,7 +54,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 .produto-card .preco{font-size:16px;font-weight:800;color:var(--rose-dark);margin-bottom:8px;}
 .cor-info{font-size:11px;color:var(--muted);margin-bottom:4px;padding:4px;background:var(--rose-light);border-radius:4px;}
 .btn-delete{background:#dc3545;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;width:100%;}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax:150px,1fr);gap:12px;margin-bottom:16px;}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
 .stat-box{background:linear-gradient(135deg,var(--rose-light),#fff);border-left:4px solid var(--rose);border-radius:10px;padding:16px;text-align:center;}
 .stat-box .num{font-size:28px;font-weight:800;color:var(--rose-dark);}
 .stat-box .lbl{font-size:11px;color:var(--muted);margin-top:4px;}
@@ -62,9 +62,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 .empty-icon{font-size:48px;margin-bottom:12px;}
 .toast{position:fixed;bottom:24px;right:24px;background:var(--dark);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;transform:translateY(8px);transition:all .3s;z-index:999;}
 .toast.show{opacity:1;transform:translateY(0);}
-.relatorio-table{width:100%;border-collapse:collapse;font-size:13px;}
-.relatorio-table th{background:var(--rose-light);color:var(--rose-dark);padding:12px;text-align:left;font-weight:700;border-bottom:2px solid var(--rose);}
-.relatorio-table td{padding:12px;border-bottom:1px solid #f0e0e5;}
 </style>
 </head>
 <body>
@@ -78,9 +75,9 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
   <div class="tabs">
     <button class="tab-btn active" onclick="abrirAba('checkin')">📦 Check-in</button>
     <button class="tab-btn" onclick="abrirAba('produtos')">🗂️ Produtos</button>
-    <button class="tab-btn" onclick="abrirAba('historico')">📜 Histórico</button>
   </div>
 
+  <!-- ABA CHECK-IN -->
   <div id="checkin" class="tab-content active">
     <div class="card">
       <h2>📸 Novo Registro de Produto</h2>
@@ -140,7 +137,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
         <div class="cores-container" id="cores-list"></div>
         <div class="cor-input">
           <input type="text" id="cor-input" placeholder="Ex: Ouro"/>
-          <button type="button" onclick="adicionarCor()">+ Adicionar</button>
+          <button type="button" onclick="window.adicionarCor()">+ Adicionar</button>
         </div>
       </div>
 
@@ -149,10 +146,11 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
         <textarea id="f-obs" placeholder="Tamanho, coleção, material..." style="min-height:80px;"></textarea>
       </div>
 
-      <button class="btn-primary" type="button" onclick="registrarProduto()">✅ Registrar Check-in</button>
+      <button class="btn-primary" type="button" onclick="window.registrarProduto()">✅ Registrar Check-in</button>
     </div>
   </div>
 
+  <!-- ABA PRODUTOS -->
   <div id="produtos" class="tab-content">
     <div class="card">
       <h2>🗂️ Produtos Registrados</h2>
@@ -161,27 +159,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
       <div id="produtos-empty" class="empty" style="display:none;">
         <div class="empty-icon">📦</div>
         <p>Nenhum produto registrado</p>
-      </div>
-    </div>
-  </div>
-
-  <div id="historico" class="tab-content">
-    <div class="card">
-      <h2>📜 Histórico de Movimentações</h2>
-      <div class="stats-grid" id="stats-historico"></div>
-      <div style="overflow-x:auto;">
-        <table class="relatorio-table">
-          <thead>
-            <tr>
-              <th>Data/Hora</th>
-              <th>Produto</th>
-              <th>Cor</th>
-              <th>Tipo</th>
-              <th>Quantidade</th>
-            </tr>
-          </thead>
-          <tbody id="historico-tbody"></tbody>
-        </table>
       </div>
     </div>
   </div>
@@ -204,7 +181,7 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+const database = firebase.database();
 
 let coresTemp = [];
 let fotoB64 = null;
@@ -221,65 +198,69 @@ function abrirAba(aba) {
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
   document.getElementById(aba).classList.add('active');
   event.target.classList.add('active');
-
-  if (aba === 'produtos') renderProdutos();
-  if (aba === 'historico') gerarHistorico();
+  if (aba === 'produtos') carregarProdutos();
 }
 
 document.getElementById('foto-input').addEventListener('change', function(e) {
-  const f = e.target.files[0];
-  if (!f) return;
-  const r = new FileReader();
-  r.onload = ev => {
-    fotoB64 = ev.target.result;
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    fotoB64 = event.target.result;
     document.getElementById('preview-img').src = fotoB64;
     document.getElementById('preview-img').style.display = 'block';
+    toast('✅ Foto adicionada!');
   };
-  r.readAsDataURL(f);
+  reader.readAsDataURL(file);
 });
 
-function adicionarCor() {
+window.adicionarCor = function() {
   const cor = document.getElementById('cor-input').value.trim();
-  if (!cor) { toast('⚠️ Digite uma cor'); return; }
-  if (coresTemp.find(c => c.nome === cor)) { toast('⚠️ Cor já existe'); return; }
-
+  if (!cor) {
+    toast('⚠️ Digite uma cor');
+    return;
+  }
+  if (coresTemp.find(c => c.nome === cor)) {
+    toast('⚠️ Cor já existe');
+    return;
+  }
   coresTemp.push({ nome: cor, gondola: 0, estoque: 0 });
-  renderCores();
+  renderizarCores();
   document.getElementById('cor-input').value = '';
-}
+};
 
-function removerCor(idx) {
+window.removerCor = function(idx) {
   coresTemp.splice(idx, 1);
-  renderCores();
-}
+  renderizarCores();
+};
 
-function atualizarCorQtd(idx, campo, valor) {
+window.atualizarCor = function(idx, campo, valor) {
   coresTemp[idx][campo] = parseInt(valor) || 0;
-}
+};
 
-function renderCores() {
-  const el = document.getElementById('cores-list');
-  el.innerHTML = coresTemp.map((cor, i) => `
+function renderizarCores() {
+  const container = document.getElementById('cores-list');
+  container.innerHTML = coresTemp.map((cor, i) => `
     <div class="cor-item">
       <div class="cor-item-header">
         <div class="cor-item-nome">${cor.nome}</div>
-        <button type="button" class="cor-item-btn" onclick="removerCor(${i})">✕</button>
+        <button type="button" class="cor-item-btn" onclick="window.removerCor(${i})">✕</button>
       </div>
       <div class="cor-qtd-grid">
         <div>
           <label>Gôndola</label>
-          <input type="number" min="0" value="${cor.gondola}" onchange="atualizarCorQtd(${i}, 'gondola', this.value)"/>
+          <input type="number" min="0" value="${cor.gondola}" onchange="window.atualizarCor(${i}, 'gondola', this.value)"/>
         </div>
         <div>
           <label>Estoque</label>
-          <input type="number" min="0" value="${cor.estoque}" onchange="atualizarCorQtd(${i}, 'estoque', this.value)"/>
+          <input type="number" min="0" value="${cor.estoque}" onchange="window.atualizarCor(${i}, 'estoque', this.value)"/>
         </div>
       </div>
     </div>
   `).join('');
 }
 
-function registrarProduto() {
+window.registrarProduto = function() {
   const nome = document.getElementById('f-nome').value.trim();
   const ref = document.getElementById('f-ref').value.trim();
   const tipo = document.getElementById('f-tipo').value;
@@ -291,49 +272,46 @@ function registrarProduto() {
 
   const produto = {
     data: new Date().toISOString(),
-    nome,
-    ref,
-    tipo,
+    nome: nome,
+    ref: ref,
+    tipo: tipo,
     fornecedor: document.getElementById('f-forn').value.trim(),
     custo: parseFloat(document.getElementById('f-custo').value) || 0,
     preco: parseFloat(document.getElementById('f-preco').value) || 0,
     obs: document.getElementById('f-obs').value.trim(),
-    cores: coresTemp.map(c => ({...c})),
-    foto: fotoB64 || null
+    cores: JSON.parse(JSON.stringify(coresTemp)),
+    foto: fotoB64
   };
 
-  db.ref('produtos').push(produto, function(err) {
-    if (err) {
-      toast('❌ Erro: ' + err.message);
-      console.error(err);
-    } else {
-      document.getElementById('f-nome').value = '';
-      document.getElementById('f-ref').value = '';
-      document.getElementById('f-tipo').value = '';
-      document.getElementById('f-forn').value = '';
-      document.getElementById('f-custo').value = '';
-      document.getElementById('f-preco').value = '';
-      document.getElementById('f-obs').value = '';
-      document.getElementById('preview-img').style.display = 'none';
-      document.getElementById('foto-input').value = '';
-      coresTemp = [];
-      renderCores();
-      fotoB64 = null;
-      toast('✅ Produto registrado!');
-    }
+  database.ref('produtos').push(produto).then(function() {
+    document.getElementById('f-nome').value = '';
+    document.getElementById('f-ref').value = '';
+    document.getElementById('f-tipo').value = '';
+    document.getElementById('f-forn').value = '';
+    document.getElementById('f-custo').value = '';
+    document.getElementById('f-preco').value = '';
+    document.getElementById('f-obs').value = '';
+    document.getElementById('preview-img').style.display = 'none';
+    document.getElementById('foto-input').value = '';
+    coresTemp = [];
+    renderizarCores();
+    fotoB64 = null;
+    toast('✅ Produto registrado!');
+  }).catch(function(error) {
+    toast('❌ Erro: ' + error.message);
   });
-}
+};
 
-function renderProdutos() {
-  db.ref('produtos').on('value', function(snapshot) {
+function carregarProdutos() {
+  database.ref('produtos').once('value', function(snapshot) {
     const dados = snapshot.val();
-    let lista = dados ? Object.entries(dados).map(([key, val]) => ({firebaseId: key, ...val})) : [];
+    const lista = dados ? Object.entries(dados).map(([key, val]) => ({id: key, ...val})) : [];
 
     const stats = document.getElementById('stats-produtos');
     const grid = document.getElementById('produtos-grid');
     const empty = document.getElementById('produtos-empty');
 
-    if (!lista.length) {
+    if (lista.length === 0) {
       empty.style.display = 'block';
       grid.innerHTML = '';
       stats.innerHTML = '';
@@ -357,56 +335,24 @@ function renderProdutos() {
         <div class="ref">${p.ref}</div>
         <div class="tipo">${p.tipo}</div>
         <div class="preco">R$ ${(p.preco || 0).toFixed(2).replace('.', ',')}</div>
-
         <div style="margin-top:12px;border-top:1px solid #f0e0e5;padding-top:12px;">
-          ${(p.cores || []).map((cor, i) => `
-            <div class="cor-info">
-              <strong>${cor.nome}</strong> | 🛒 ${cor.gondola || 0} | 📦 ${cor.estoque || 0}
-            </div>
-          `).join('')}
+          ${(p.cores || []).map(c => `<div class="cor-info"><strong>${c.nome}</strong> | 🛒 ${c.gondola || 0} | 📦 ${c.estoque || 0}</div>`).join('')}
         </div>
-
-        <button class="btn-delete" style="margin-top:8px;" onclick="deletarProduto('${p.firebaseId}')">🗑️ Deletar</button>
+        <button class="btn-delete" style="margin-top:8px;" onclick="window.deletarProduto('${p.id}')">🗑️ Deletar</button>
       </div>
     `).join('');
   });
 }
 
-function deletarProduto(id) {
+window.deletarProduto = function(id) {
   if (!confirm('Deletar este produto?')) return;
-  db.ref(`produtos/${id}`).remove(function(err) {
-    if (err) {
-      toast('❌ Erro ao deletar');
-    } else {
-      toast('✅ Deletado!');
-    }
+  database.ref('produtos/' + id).remove().then(function() {
+    toast('✅ Deletado!');
+    carregarProdutos();
+  }).catch(function(error) {
+    toast('❌ Erro: ' + error.message);
   });
-}
-
-function gerarHistorico() {
-  db.ref('historico').on('value', function(snapshot) {
-    const dados = snapshot.val();
-    let lista = dados ? Object.entries(dados).map(([key, val]) => ({...val})) : [];
-    lista.reverse();
-
-    const stats = document.getElementById('stats-historico');
-    const registros = lista.length;
-
-    stats.innerHTML = `
-      <div class="stat-box"><div class="num">${registros}</div><div class="lbl">Movimentações</div></div>`;
-
-    const tbody = document.getElementById('historico-tbody');
-    tbody.innerHTML = lista.map(h => `
-      <tr>
-        <td>${new Date(h.data).toLocaleString('pt-BR')}</td>
-        <td>${h.produtoNome}</td>
-        <td>${h.cor}</td>
-        <td>${h.tipo}</td>
-        <td>${h.quantidade}</td>
-      </tr>
-    `).join('');
-  });
-}
+};
 </script>
 
 </body>
