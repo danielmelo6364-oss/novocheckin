@@ -77,7 +77,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
     <button class="tab-btn" onclick="abrirAba('produtos')">🗂️ Produtos</button>
   </div>
 
-  <!-- ABA CHECK-IN -->
   <div id="checkin" class="tab-content active">
     <div class="card">
       <h2>📸 Novo Registro de Produto</h2>
@@ -87,7 +86,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
         <div class="foto-upload" onclick="document.getElementById('foto-input').click()">
           <input type="file" id="foto-input" accept="image/*" capture="environment"/>
           <div class="foto-icon">📷</div>
-          <div class="foto-text">Toque para tirar foto ou selecionar</div>
+          <div class="foto-text">Toque para tirar foto</div>
           <img id="preview-img" alt=""/>
         </div>
       </div>
@@ -137,7 +136,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
         <div class="cores-container" id="cores-list"></div>
         <div class="cor-input">
           <input type="text" id="cor-input" placeholder="Ex: Ouro"/>
-          <button type="button" onclick="window.adicionarCor()">+ Adicionar</button>
+          <button type="button" onclick="adicionarCor()">+ Adicionar</button>
         </div>
       </div>
 
@@ -146,11 +145,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
         <textarea id="f-obs" placeholder="Tamanho, coleção, material..." style="min-height:80px;"></textarea>
       </div>
 
-      <button class="btn-primary" type="button" onclick="window.registrarProduto()">✅ Registrar Check-in</button>
+      <button class="btn-primary" type="button" onclick="registrarProduto()">✅ Registrar Check-in</button>
     </div>
   </div>
 
-  <!-- ABA PRODUTOS -->
   <div id="produtos" class="tab-content">
     <div class="card">
       <h2>🗂️ Produtos Registrados</h2>
@@ -168,23 +166,25 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js"></script>
 
 <script>
 const firebaseConfig = {
   apiKey: "AIzaSyDnMsL-dhv3uM2tP3B-IcJUFHVo1MmoW2k",
   authDomain: "checkin-4760f.firebaseapp.com",
   projectId: "checkin-4760f",
-  storageBucket: "checkin-4760f.firebasestorage.app",
+  storageBucket: "checkin-4760f.appspot.com",
   messagingSenderId: "207981324873",
   appId: "1:207981324873:web:00ccce2c26033b3f966d98",
   databaseURL: "https://checkin-4760f-default-rtdb.firebaseio.com"
 };
 
 firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
+const db = firebase.database();
+const storage = firebase.storage();
 
 let coresTemp = [];
-let fotoB64 = null;
+let fotoFile = null;
 
 function toast(msg) {
   const t = document.getElementById('toast');
@@ -204,63 +204,57 @@ function abrirAba(aba) {
 document.getElementById('foto-input').addEventListener('change', function(e) {
   const file = e.target.files[0];
   if (!file) return;
+  fotoFile = file;
   const reader = new FileReader();
   reader.onload = function(event) {
-    fotoB64 = event.target.result;
-    document.getElementById('preview-img').src = fotoB64;
+    document.getElementById('preview-img').src = event.target.result;
     document.getElementById('preview-img').style.display = 'block';
-    toast('✅ Foto adicionada!');
+    toast('✅ Foto selecionada!');
   };
   reader.readAsDataURL(file);
 });
 
-window.adicionarCor = function() {
+function adicionarCor() {
   const cor = document.getElementById('cor-input').value.trim();
-  if (!cor) {
-    toast('⚠️ Digite uma cor');
-    return;
-  }
-  if (coresTemp.find(c => c.nome === cor)) {
-    toast('⚠️ Cor já existe');
-    return;
-  }
+  if (!cor) { toast('⚠️ Digite uma cor'); return; }
+  if (coresTemp.find(c => c.nome === cor)) { toast('⚠️ Cor já existe'); return; }
   coresTemp.push({ nome: cor, gondola: 0, estoque: 0 });
-  renderizarCores();
+  renderCores();
   document.getElementById('cor-input').value = '';
-};
+}
 
-window.removerCor = function(idx) {
+function removerCor(idx) {
   coresTemp.splice(idx, 1);
-  renderizarCores();
-};
+  renderCores();
+}
 
-window.atualizarCor = function(idx, campo, valor) {
+function atualizarCorQtd(idx, campo, valor) {
   coresTemp[idx][campo] = parseInt(valor) || 0;
-};
+}
 
-function renderizarCores() {
-  const container = document.getElementById('cores-list');
-  container.innerHTML = coresTemp.map((cor, i) => `
+function renderCores() {
+  const el = document.getElementById('cores-list');
+  el.innerHTML = coresTemp.map((cor, i) => `
     <div class="cor-item">
       <div class="cor-item-header">
         <div class="cor-item-nome">${cor.nome}</div>
-        <button type="button" class="cor-item-btn" onclick="window.removerCor(${i})">✕</button>
+        <button type="button" class="cor-item-btn" onclick="removerCor(${i})">✕</button>
       </div>
       <div class="cor-qtd-grid">
         <div>
           <label>Gôndola</label>
-          <input type="number" min="0" value="${cor.gondola}" onchange="window.atualizarCor(${i}, 'gondola', this.value)"/>
+          <input type="number" min="0" value="${cor.gondola}" onchange="atualizarCorQtd(${i}, 'gondola', this.value)"/>
         </div>
         <div>
           <label>Estoque</label>
-          <input type="number" min="0" value="${cor.estoque}" onchange="window.atualizarCor(${i}, 'estoque', this.value)"/>
+          <input type="number" min="0" value="${cor.estoque}" onchange="atualizarCorQtd(${i}, 'estoque', this.value)"/>
         </div>
       </div>
     </div>
   `).join('');
 }
 
-window.registrarProduto = function() {
+async function registrarProduto() {
   const nome = document.getElementById('f-nome').value.trim();
   const ref = document.getElementById('f-ref').value.trim();
   const tipo = document.getElementById('f-tipo').value;
@@ -270,20 +264,33 @@ window.registrarProduto = function() {
   if (!tipo) { toast('⚠️ Selecione o tipo'); return; }
   if (coresTemp.length === 0) { toast('⚠️ Adicione uma cor'); return; }
 
+  let fotoURL = null;
+
+  if (fotoFile) {
+    try {
+      const storageRef = storage.ref(`produtos/${Date.now()}_${fotoFile.name}`);
+      const snapshot = await storageRef.put(fotoFile);
+      fotoURL = await snapshot.ref.getDownloadURL();
+    } catch (err) {
+      toast('❌ Erro ao salvar foto: ' + err.message);
+      return;
+    }
+  }
+
   const produto = {
     data: new Date().toISOString(),
-    nome: nome,
-    ref: ref,
-    tipo: tipo,
+    nome,
+    ref,
+    tipo,
     fornecedor: document.getElementById('f-forn').value.trim(),
     custo: parseFloat(document.getElementById('f-custo').value) || 0,
     preco: parseFloat(document.getElementById('f-preco').value) || 0,
     obs: document.getElementById('f-obs').value.trim(),
-    cores: JSON.parse(JSON.stringify(coresTemp)),
-    foto: fotoB64
+    cores: coresTemp.map(c => ({...c})),
+    foto: fotoURL
   };
 
-  database.ref('produtos').push(produto).then(function() {
+  db.ref('produtos').push(produto).then(() => {
     document.getElementById('f-nome').value = '';
     document.getElementById('f-ref').value = '';
     document.getElementById('f-tipo').value = '';
@@ -294,16 +301,16 @@ window.registrarProduto = function() {
     document.getElementById('preview-img').style.display = 'none';
     document.getElementById('foto-input').value = '';
     coresTemp = [];
-    renderizarCores();
-    fotoB64 = null;
-    toast('✅ Produto registrado!');
-  }).catch(function(error) {
-    toast('❌ Erro: ' + error.message);
+    renderCores();
+    fotoFile = null;
+    toast('✅ Produto registrado com sucesso!');
+  }).catch(err => {
+    toast('❌ Erro: ' + err.message);
   });
-};
+}
 
 function carregarProdutos() {
-  database.ref('produtos').once('value', function(snapshot) {
+  db.ref('produtos').once('value', snapshot => {
     const dados = snapshot.val();
     const lista = dados ? Object.entries(dados).map(([key, val]) => ({id: key, ...val})) : [];
 
@@ -311,7 +318,7 @@ function carregarProdutos() {
     const grid = document.getElementById('produtos-grid');
     const empty = document.getElementById('produtos-empty');
 
-    if (lista.length === 0) {
+    if (!lista.length) {
       empty.style.display = 'block';
       grid.innerHTML = '';
       stats.innerHTML = '';
@@ -338,21 +345,21 @@ function carregarProdutos() {
         <div style="margin-top:12px;border-top:1px solid #f0e0e5;padding-top:12px;">
           ${(p.cores || []).map(c => `<div class="cor-info"><strong>${c.nome}</strong> | 🛒 ${c.gondola || 0} | 📦 ${c.estoque || 0}</div>`).join('')}
         </div>
-        <button class="btn-delete" style="margin-top:8px;" onclick="window.deletarProduto('${p.id}')">🗑️ Deletar</button>
+        <button class="btn-delete" style="margin-top:8px;" onclick="deletarProduto('${p.id}')">🗑️ Deletar</button>
       </div>
     `).join('');
   });
 }
 
-window.deletarProduto = function(id) {
+function deletarProduto(id) {
   if (!confirm('Deletar este produto?')) return;
-  database.ref('produtos/' + id).remove().then(function() {
+  db.ref(`produtos/${id}`).remove().then(() => {
     toast('✅ Deletado!');
     carregarProdutos();
-  }).catch(function(error) {
-    toast('❌ Erro: ' + error.message);
+  }).catch(err => {
+    toast('❌ Erro: ' + err.message);
   });
-};
+}
 </script>
 
 </body>
