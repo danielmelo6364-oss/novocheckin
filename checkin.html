@@ -54,7 +54,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 .produto-card .preco{font-size:16px;font-weight:800;color:var(--rose-dark);margin-bottom:8px;}
 .cor-info{font-size:11px;color:var(--muted);margin-bottom:4px;padding:4px;background:var(--rose-light);border-radius:4px;}
 .btn-delete{background:#dc3545;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;width:100%;}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax:150px,1fr);gap:12px;margin-bottom:16px;}
 .stat-box{background:linear-gradient(135deg,var(--rose-light),#fff);border-left:4px solid var(--rose);border-radius:10px;padding:16px;text-align:center;}
 .stat-box .num{font-size:28px;font-weight:800;color:var(--rose-dark);}
 .stat-box .lbl{font-size:11px;color:var(--muted);margin-top:4px;}
@@ -90,7 +90,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
         <div class="foto-upload" onclick="document.getElementById('foto-input').click()">
           <input type="file" id="foto-input" accept="image/*" capture="environment"/>
           <div class="foto-icon">📷</div>
-          <div class="foto-text">Toque para tirar foto</div>
+          <div class="foto-text">Toque para tirar foto ou selecionar</div>
           <img id="preview-img" alt=""/>
         </div>
       </div>
@@ -167,7 +167,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 
   <div id="historico" class="tab-content">
     <div class="card">
-      <h2>📜 Histórico</h2>
+      <h2>📜 Histórico de Movimentações</h2>
       <div class="stats-grid" id="stats-historico"></div>
       <div style="overflow-x:auto;">
         <table class="relatorio-table">
@@ -234,7 +234,6 @@ document.getElementById('foto-input').addEventListener('change', function(e) {
     fotoB64 = ev.target.result;
     document.getElementById('preview-img').src = fotoB64;
     document.getElementById('preview-img').style.display = 'block';
-    toast('✅ Foto adicionada!');
   };
   r.readAsDataURL(f);
 });
@@ -299,26 +298,29 @@ function registrarProduto() {
     custo: parseFloat(document.getElementById('f-custo').value) || 0,
     preco: parseFloat(document.getElementById('f-preco').value) || 0,
     obs: document.getElementById('f-obs').value.trim(),
-    cores: JSON.parse(JSON.stringify(coresTemp)),
+    cores: coresTemp.map(c => ({...c})),
     foto: fotoB64 || null
   };
 
-  db.ref('produtos').push(produto).then(() => {
-    document.getElementById('f-nome').value = '';
-    document.getElementById('f-ref').value = '';
-    document.getElementById('f-tipo').value = '';
-    document.getElementById('f-forn').value = '';
-    document.getElementById('f-custo').value = '';
-    document.getElementById('f-preco').value = '';
-    document.getElementById('f-obs').value = '';
-    document.getElementById('preview-img').style.display = 'none';
-    document.getElementById('foto-input').value = '';
-    coresTemp = [];
-    renderCores();
-    fotoB64 = null;
-    toast('✅ Produto registrado!');
-  }).catch(err => {
-    toast('❌ Erro: ' + err.message);
+  db.ref('produtos').push(produto, function(err) {
+    if (err) {
+      toast('❌ Erro: ' + err.message);
+      console.error(err);
+    } else {
+      document.getElementById('f-nome').value = '';
+      document.getElementById('f-ref').value = '';
+      document.getElementById('f-tipo').value = '';
+      document.getElementById('f-forn').value = '';
+      document.getElementById('f-custo').value = '';
+      document.getElementById('f-preco').value = '';
+      document.getElementById('f-obs').value = '';
+      document.getElementById('preview-img').style.display = 'none';
+      document.getElementById('foto-input').value = '';
+      coresTemp = [];
+      renderCores();
+      fotoB64 = null;
+      toast('✅ Produto registrado!');
+    }
   });
 }
 
@@ -355,9 +357,15 @@ function renderProdutos() {
         <div class="ref">${p.ref}</div>
         <div class="tipo">${p.tipo}</div>
         <div class="preco">R$ ${(p.preco || 0).toFixed(2).replace('.', ',')}</div>
+
         <div style="margin-top:12px;border-top:1px solid #f0e0e5;padding-top:12px;">
-          ${(p.cores || []).map(cor => `<div class="cor-info"><strong>${cor.nome}</strong> | 🛒 ${cor.gondola || 0} | 📦 ${cor.estoque || 0}</div>`).join('')}
+          ${(p.cores || []).map((cor, i) => `
+            <div class="cor-info">
+              <strong>${cor.nome}</strong> | 🛒 ${cor.gondola || 0} | 📦 ${cor.estoque || 0}
+            </div>
+          `).join('')}
         </div>
+
         <button class="btn-delete" style="margin-top:8px;" onclick="deletarProduto('${p.firebaseId}')">🗑️ Deletar</button>
       </div>
     `).join('');
@@ -366,30 +374,35 @@ function renderProdutos() {
 
 function deletarProduto(id) {
   if (!confirm('Deletar este produto?')) return;
-  db.ref('produtos/' + id).remove().then(() => {
-    toast('✅ Deletado!');
-  }).catch(err => {
-    toast('❌ Erro: ' + err.message);
+  db.ref(`produtos/${id}`).remove(function(err) {
+    if (err) {
+      toast('❌ Erro ao deletar');
+    } else {
+      toast('✅ Deletado!');
+    }
   });
 }
 
 function gerarHistorico() {
   db.ref('historico').on('value', function(snapshot) {
     const dados = snapshot.val();
-    let lista = dados ? Object.entries(dados).map(([key, val]) => val) : [];
+    let lista = dados ? Object.entries(dados).map(([key, val]) => ({...val})) : [];
     lista.reverse();
 
     const stats = document.getElementById('stats-historico');
-    stats.innerHTML = `<div class="stat-box"><div class="num">${lista.length}</div><div class="lbl">Movimentações</div></div>`;
+    const registros = lista.length;
+
+    stats.innerHTML = `
+      <div class="stat-box"><div class="num">${registros}</div><div class="lbl">Movimentações</div></div>`;
 
     const tbody = document.getElementById('historico-tbody');
     tbody.innerHTML = lista.map(h => `
       <tr>
         <td>${new Date(h.data).toLocaleString('pt-BR')}</td>
-        <td>${h.produtoNome || '-'}</td>
-        <td>${h.cor || '-'}</td>
-        <td>${h.tipo || '-'}</td>
-        <td>${h.quantidade || '-'}</td>
+        <td>${h.produtoNome}</td>
+        <td>${h.cor}</td>
+        <td>${h.tipo}</td>
+        <td>${h.quantidade}</td>
       </tr>
     `).join('');
   });
