@@ -24,8 +24,7 @@ header{background:linear-gradient(135deg,var(--dark),var(--rose-dark));color:#ff
 input[type=text],input[type=number],select,textarea{width:100%;padding:11px 14px;border:1.5px solid #e0d0d5;border-radius:10px;font-size:14px;color:var(--text);background:#fdf5f7;font-family:inherit;}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);background:#fff;}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
-@media(max-width:768px){.grid2,.grid3{grid-template-columns:1fr;}}
+@media(max-width:768px){.grid2{grid-template-columns:1fr;}}
 .foto-upload{border:2px dashed #e0c0cc;border-radius:12px;padding:24px;text-align:center;cursor:pointer;background:#fdf5f7;}
 .foto-upload:hover{border-color:var(--rose);}
 .foto-upload input{display:none;}
@@ -66,10 +65,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 .relatorio-table{width:100%;border-collapse:collapse;font-size:13px;}
 .relatorio-table th{background:var(--rose-light);color:var(--rose-dark);padding:12px;text-align:left;font-weight:700;border-bottom:2px solid var(--rose);}
 .relatorio-table td{padding:12px;border-bottom:1px solid #f0e0e5;}
-.foto-btns{display:flex;gap:8px;margin-top:12px;}
-.foto-btn{flex:1;padding:10px;border:none;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;}
-.btn-camera{background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;}
-.btn-galeria{background:#f0f0f0;color:var(--text);}
 </style>
 </head>
 <body>
@@ -81,9 +76,9 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
   </header>
 
   <div class="tabs">
-    <button class="tab-btn active" onclick="abrirAba('checkin', event)">📦 Check-in</button>
-    <button class="tab-btn" onclick="abrirAba('produtos', event)">🗂️ Produtos</button>
-    <button class="tab-btn" onclick="abrirAba('historico', event)">📜 Histórico</button>
+    <button class="tab-btn active" onclick="abrirAba('checkin')">📦 Check-in</button>
+    <button class="tab-btn" onclick="abrirAba('produtos')">🗂️ Produtos</button>
+    <button class="tab-btn" onclick="abrirAba('historico')">📜 Histórico</button>
   </div>
 
   <!-- ABA CHECK-IN -->
@@ -92,17 +87,12 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
       <h2>📸 Novo Registro de Produto</h2>
 
       <div class="form-group">
-        <label>Foto do Produto</label>
-        <div class="foto-upload" onclick="abrirGaleria()">
+        <label>Foto do Produto (Câmera ou Galeria)</label>
+        <div class="foto-upload" onclick="document.getElementById('foto-input').click()">
+          <input type="file" id="foto-input" accept="image/*" capture="environment"/>
           <div class="foto-icon">📷</div>
-          <div class="foto-text">Clique para adicionar foto</div>
+          <div class="foto-text">Toque para tirar foto ou selecionar</div>
           <img id="preview-img" alt=""/>
-        </div>
-        <input type="file" id="foto-input" accept="image/*" style="display:none;"/>
-        <input type="file" id="foto-camera" accept="image/*" capture="environment" style="display:none;"/>
-        <div class="foto-btns">
-          <button type="button" class="foto-btn btn-camera" onclick="abrirCamera()">📷 Câmera</button>
-          <button type="button" class="foto-btn btn-galeria" onclick="abrirGaleria()">🖼️ Galeria</button>
         </div>
       </div>
 
@@ -191,8 +181,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
               <th>Cor</th>
               <th>Tipo</th>
               <th>Quantidade</th>
-              <th>Gôndola</th>
-              <th>Estoque</th>
             </tr>
           </thead>
           <tbody id="historico-tbody"></tbody>
@@ -231,29 +219,17 @@ function toast(msg) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-function abrirAba(aba, e) {
-  e.preventDefault();
+function abrirAba(aba) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
   document.getElementById(aba).classList.add('active');
-  e.target.classList.add('active');
+  event.target.classList.add('active');
 
   if (aba === 'produtos') renderProdutos();
   if (aba === 'historico') gerarHistorico();
 }
 
-function abrirCamera() {
-  document.getElementById('foto-camera').click();
-}
-
-function abrirGaleria() {
-  document.getElementById('foto-input').click();
-}
-
-document.getElementById('foto-input').addEventListener('change', processarFoto);
-document.getElementById('foto-camera').addEventListener('change', processarFoto);
-
-function processarFoto(e) {
+document.getElementById('foto-input').addEventListener('change', function(e) {
   const f = e.target.files[0];
   if (!f) return;
   const r = new FileReader();
@@ -261,10 +237,9 @@ function processarFoto(e) {
     fotoB64 = ev.target.result;
     document.getElementById('preview-img').src = fotoB64;
     document.getElementById('preview-img').style.display = 'block';
-    toast('✅ Foto adicionada!');
   };
   r.readAsDataURL(f);
-}
+});
 
 function adicionarCor() {
   const cor = document.getElementById('cor-input').value.trim();
@@ -307,7 +282,7 @@ function renderCores() {
   `).join('');
 }
 
-async function registrarProduto() {
+function registrarProduto() {
   const nome = document.getElementById('f-nome').value.trim();
   const ref = document.getElementById('f-ref').value.trim();
   const tipo = document.getElementById('f-tipo').value;
@@ -330,45 +305,29 @@ async function registrarProduto() {
     foto: fotoB64 || null
   };
 
-  try {
-    const novoRef = db.ref('produtos').push(produto);
-
-    for (let cor of coresTemp) {
-      db.ref('historico').push({
-        data: new Date().toISOString(),
-        tipo: 'REGISTRO',
-        produtoId: novoRef.key,
-        produtoNome: nome,
-        produtoRef: ref,
-        cor: cor.nome,
-        quantidade: cor.gondola + cor.estoque,
-        gondola: cor.gondola,
-        estoque: cor.estoque
-      });
+  db.ref('produtos').push(produto, function(err) {
+    if (err) {
+      toast('❌ Erro: ' + err.message);
+    } else {
+      document.getElementById('f-nome').value = '';
+      document.getElementById('f-ref').value = '';
+      document.getElementById('f-tipo').value = '';
+      document.getElementById('f-forn').value = '';
+      document.getElementById('f-custo').value = '';
+      document.getElementById('f-preco').value = '';
+      document.getElementById('f-obs').value = '';
+      document.getElementById('preview-img').style.display = 'none';
+      document.getElementById('foto-input').value = '';
+      coresTemp = [];
+      renderCores();
+      fotoB64 = null;
+      toast('✅ Produto registrado!');
     }
-
-    document.getElementById('f-nome').value = '';
-    document.getElementById('f-ref').value = '';
-    document.getElementById('f-tipo').value = '';
-    document.getElementById('f-forn').value = '';
-    document.getElementById('f-custo').value = '';
-    document.getElementById('f-preco').value = '';
-    document.getElementById('f-obs').value = '';
-    document.getElementById('preview-img').style.display = 'none';
-    document.getElementById('foto-input').value = '';
-    document.getElementById('foto-camera').value = '';
-    coresTemp = [];
-    renderCores();
-    fotoB64 = null;
-
-    toast('✅ Produto registrado!');
-  } catch (err) {
-    toast('❌ Erro: ' + err.message);
-  }
+  });
 }
 
 function renderProdutos() {
-  db.ref('produtos').on('value', (snapshot) => {
+  db.ref('produtos').on('value', function(snapshot) {
     const dados = snapshot.val();
     let lista = dados ? Object.entries(dados).map(([key, val]) => ({firebaseId: key, ...val})) : [];
 
@@ -417,27 +376,26 @@ function renderProdutos() {
 
 function deletarProduto(id) {
   if (!confirm('Deletar este produto?')) return;
-  try {
-    db.ref(`produtos/${id}`).remove();
-    toast('✅ Deletado!');
-  } catch (err) {
-    toast('❌ Erro ao deletar');
-  }
+  db.ref(`produtos/${id}`).remove(function(err) {
+    if (err) {
+      toast('❌ Erro ao deletar');
+    } else {
+      toast('✅ Deletado!');
+    }
+  });
 }
 
 function gerarHistorico() {
-  db.ref('historico').on('value', (snapshot) => {
+  db.ref('historico').on('value', function(snapshot) {
     const dados = snapshot.val();
     let lista = dados ? Object.entries(dados).map(([key, val]) => ({...val})) : [];
     lista.reverse();
 
     const stats = document.getElementById('stats-historico');
     const registros = lista.length;
-    const reposicoes = lista.filter(h => h.tipo === 'REPOSIÇÃO').length;
 
     stats.innerHTML = `
-      <div class="stat-box"><div class="num">${registros}</div><div class="lbl">Movimentações</div></div>
-      <div class="stat-box"><div class="num">${reposicoes}</div><div class="lbl">Reposições</div></div>`;
+      <div class="stat-box"><div class="num">${registros}</div><div class="lbl">Movimentações</div></div>`;
 
     const tbody = document.getElementById('historico-tbody');
     tbody.innerHTML = lista.map(h => `
@@ -447,8 +405,6 @@ function gerarHistorico() {
         <td>${h.cor}</td>
         <td>${h.tipo}</td>
         <td>${h.quantidade}</td>
-        <td>${h.gondola}</td>
-        <td>${h.estoque}</td>
       </tr>
     `).join('');
   });
