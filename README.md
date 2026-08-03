@@ -42,8 +42,9 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 .cor-input{display:flex;gap:8px;align-items:flex-end;}
 .cor-input input{flex:1;}
 .cor-input button{background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;}
-.btn-primary{width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;font-size:15px;font-weight:700;cursor:pointer;}
+.btn-primary{width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;font-size:15px;font-weight:700;cursor:pointer;position:relative;z-index:10;}
 .btn-primary:hover{opacity:.9;}
+.btn-primary:active{transform:scale(0.98);}
 .produtos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
 .produto-card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 12px rgba(0,0,0,.08);border-left:4px solid var(--rose);}
 .produto-card img{width:100%;height:160px;object-fit:cover;border-radius:8px;margin-bottom:12px;}
@@ -214,23 +215,23 @@ document.getElementById('foto-input').addEventListener('change', function(e) {
   reader.readAsDataURL(file);
 });
 
-window.adicionarCor = function() {
+function adicionarCor() {
   const cor = document.getElementById('cor-input').value.trim();
   if (!cor) { toast('⚠️ Digite uma cor'); return; }
   if (coresTemp.find(c => c.nome === cor)) { toast('⚠️ Cor já existe'); return; }
   coresTemp.push({ nome: cor, gondola: 0, estoque: 0 });
   renderCores();
   document.getElementById('cor-input').value = '';
-};
+}
 
-window.removerCor = function(idx) {
+function removerCor(idx) {
   coresTemp.splice(idx, 1);
   renderCores();
-};
+}
 
-window.atualizarCorQtd = function(idx, campo, valor) {
+function atualizarCorQtd(idx, campo, valor) {
   coresTemp[idx][campo] = parseInt(valor) || 0;
-};
+}
 
 function renderCores() {
   const el = document.getElementById('cores-list');
@@ -254,7 +255,7 @@ function renderCores() {
   `).join('');
 }
 
-window.registrarProduto = async function() {
+async function registrarProduto() {
   const nome = document.getElementById('f-nome').value.trim();
   const ref = document.getElementById('f-ref').value.trim();
   const tipo = document.getElementById('f-tipo').value;
@@ -309,7 +310,7 @@ window.registrarProduto = async function() {
   } catch (err) {
     toast('❌ Erro: ' + err.message);
   }
-};
+}
 
 function carregarProdutos() {
   onValue(ref(db, 'produtos'), snapshot => {
