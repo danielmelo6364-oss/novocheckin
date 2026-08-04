@@ -267,24 +267,6 @@ function registrarProduto() {
 
   toast('⏳ Salvando...');
 
-  let fotoURL = null;
-
-  if (fotoFile) {
-    const fileName = `${Date.now()}_${fotoFile.name}`;
-    storage.ref(`produtos/${fileName}`).put(fotoFile).then(snapshot => {
-      return snapshot.ref.getDownloadURL();
-    }).then(url => {
-      fotoURL = url;
-      salvarProduto(nome, ref, tipo, fotoURL);
-    }).catch(err => {
-      toast('❌ Erro foto');
-    });
-  } else {
-    salvarProduto(nome, ref, tipo, null);
-  }
-}
-
-function salvarProduto(nome, ref, tipo, fotoURL) {
   const produto = {
     data: new Date().toISOString(),
     nome: nome,
@@ -295,32 +277,48 @@ function salvarProduto(nome, ref, tipo, fotoURL) {
     preco: parseFloat(document.getElementById('f-preco').value) || 0,
     obs: document.getElementById('f-obs').value.trim(),
     cores: coresTemp.map(c => ({nome: c.nome, gondola: c.gondola, estoque: c.estoque})),
-    foto: fotoURL
+    foto: null
   };
 
-  db.ref('produtos').push(produto, function(err) {
-    if (err) {
-      toast('❌ Erro: ' + err.message);
-    } else {
-      document.getElementById('f-nome').value = '';
-      document.getElementById('f-ref').value = '';
-      document.getElementById('f-tipo').value = '';
-      document.getElementById('f-forn').value = '';
-      document.getElementById('f-custo').value = '';
-      document.getElementById('f-preco').value = '';
-      document.getElementById('f-obs').value = '';
-      document.getElementById('preview-img').style.display = 'none';
-      document.getElementById('foto-input').value = '';
-      coresTemp = [];
-      renderCores();
-      fotoFile = null;
-      toast('✅ Registrado!');
-    }
+  if (fotoFile) {
+    const fileName = `${Date.now()}_${fotoFile.name}`;
+    const fileRef = storage.ref(`produtos/${fileName}`);
+    fileRef.put(fotoFile).then(snapshot => {
+      return snapshot.ref.getDownloadURL();
+    }).then(url => {
+      produto.foto = url;
+      salvarProduto(produto);
+    }).catch(err => {
+      toast('❌ Erro foto');
+      salvarProduto(produto);
+    });
+  } else {
+    salvarProduto(produto);
+  }
+}
+
+function salvarProduto(produto) {
+  db.ref('produtos').push(produto).then(() => {
+    document.getElementById('f-nome').value = '';
+    document.getElementById('f-ref').value = '';
+    document.getElementById('f-tipo').value = '';
+    document.getElementById('f-forn').value = '';
+    document.getElementById('f-custo').value = '';
+    document.getElementById('f-preco').value = '';
+    document.getElementById('f-obs').value = '';
+    document.getElementById('preview-img').style.display = 'none';
+    document.getElementById('foto-input').value = '';
+    coresTemp = [];
+    renderCores();
+    fotoFile = null;
+    toast('✅ Registrado!');
+  }).catch(err => {
+    toast('❌ Erro: ' + err.message);
   });
 }
 
 function carregarProdutos() {
-  db.ref('produtos').once('value', function(snapshot) {
+  db.ref('produtos').once('value').then(snapshot => {
     const dados = snapshot.val();
     const lista = dados ? Object.entries(dados).map(([key, val]) => ({id: key, ...val})) : [];
 
@@ -358,18 +356,18 @@ function carregarProdutos() {
         <button class="btn-delete" style="margin-top:8px;" onclick="deletarProduto('${p.id}')">🗑️ Deletar</button>
       </div>
     `).join('');
+  }).catch(err => {
+    toast('❌ Erro ao carregar');
   });
 }
 
 function deletarProduto(id) {
   if (!confirm('Deletar?')) return;
-  db.ref(`produtos/${id}`).remove(function(err) {
-    if (err) {
-      toast('❌ Erro');
-    } else {
-      toast('✅ Deletado!');
-      carregarProdutos();
-    }
+  db.ref(`produtos/${id}`).remove().then(() => {
+    toast('✅ Deletado!');
+    carregarProdutos();
+  }).catch(err => {
+    toast('❌ Erro');
   });
 }
 </script>
