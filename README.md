@@ -26,12 +26,15 @@
         .variations { background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid #a8597e; }
         .variation-input-row { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: flex-end; margin-bottom: 15px; }
         .variation-input-row input { padding: 8px; border: 1px solid #ddd; border-radius: 5px; }
-        .variation-item { background: white; padding: 10px; border-radius: 5px; margin-bottom: 10px; display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: center; border-left: 3px solid #27ae60; }
-        .variation-item strong { color: #a8597e; }
+        .variation-item { background: white; padding: 12px; border-radius: 5px; margin-bottom: 10px; display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: center; border-left: 3px solid #27ae60; border: 1px solid #ddd; }
+        .variation-item p { margin: 0; color: #333; font-size: 13px; font-weight: 600; }
         .product-item { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #a8597e; }
-        .product-item h3 { color: #a8597e; margin-bottom: 8px; }
+        .product-item h3 { color: #a8597e; margin-bottom: 10px; font-size: 16px; }
         .product-item p { color: #666; font-size: 12px; margin-bottom: 5px; }
-        .color-badge { display: inline-block; padding: 5px 10px; background: white; border: 1px solid #a8597e; border-radius: 3px; font-size: 11px; margin-right: 5px; margin-bottom: 5px; }
+        .product-item .cores-section { background: white; padding: 10px; border-radius: 5px; margin-top: 10px; border-left: 3px solid #a8597e; }
+        .product-item .cores-section h4 { color: #a8597e; font-size: 13px; margin-bottom: 8px; }
+        .color-item { background: #f0f0f0; padding: 8px; border-radius: 4px; margin-bottom: 5px; border-left: 3px solid #27ae60; }
+        .color-item strong { color: #a8597e; }
         .history-item { background: #f9f9f9; padding: 12px; border-radius: 5px; margin-bottom: 10px; border-left: 4px solid #a8597e; }
         .history-item .timestamp { color: #999; font-size: 11px; margin-bottom: 3px; }
         .history-item .action { color: #333; font-weight: 600; font-size: 13px; }
@@ -194,8 +197,10 @@
 
         // SINCRONIZAR PRODUTOS EM TEMPO REAL
         onValue(ref(database, 'produtos'), (snapshot) => {
+            console.log('Atualizando produtos...');
             if (snapshot.exists()) {
                 produtos = snapshot.val();
+                console.log('Produtos:', produtos);
             } else {
                 produtos = {};
             }
@@ -253,9 +258,9 @@
                 const div = document.createElement('div');
                 div.className = 'variation-item';
                 div.innerHTML = `
-                    <strong>${v.cor}</strong>
-                    <div>Estoque: <strong>${v.estoque}</strong></div>
-                    <div>Gôndola: <strong>${v.gondola}</strong></div>
+                    <p>🎨 ${v.cor}</p>
+                    <p>📦 Estoque: ${v.estoque}</p>
+                    <p>🏪 Gôndola: ${v.gondola}</p>
                     <button class="button danger" onclick="variacoesCadastro.splice(${index}, 1); renderizarVariacoes();" style="padding: 8px 12px; font-size: 12px;">✕ Remover</button>
                 `;
                 container.appendChild(div);
@@ -332,12 +337,22 @@
             }
 
             encontrados.forEach(produto => {
-                let totalEstoque = 0, totalGondola = 0, cores = '';
-                Object.values(produto.variacoes).forEach(v => {
-                    cores += `<div class="color-badge">${v.cor}: E${v.estoque} | G${v.gondola}</div>`;
-                    totalEstoque += v.estoque;
-                    totalGondola += v.gondola;
-                });
+                let totalEstoque = 0, totalGondola = 0;
+                let coresHtml = '';
+
+                if (produto.variacoes && Object.keys(produto.variacoes).length > 0) {
+                    Object.values(produto.variacoes).forEach(v => {
+                        coresHtml += `
+                            <div class="color-item">
+                                <strong>🎨 ${v.cor}</strong> - Estoque: <strong>${v.estoque}</strong> | Gôndola: <strong>${v.gondola}</strong>
+                            </div>
+                        `;
+                        totalEstoque += v.estoque;
+                        totalGondola += v.gondola;
+                    });
+                } else {
+                    coresHtml = '<p style="color: #999;">Nenhuma cor cadastrada</p>';
+                }
 
                 const div = document.createElement('div');
                 div.className = 'product-item';
@@ -347,8 +362,12 @@
                     <p><strong>Tipo:</strong> ${produto.tipo}</p>
                     <p><strong>Preço:</strong> R$ ${produto.custo.toFixed(2)} (custo) | R$ ${produto.venda.toFixed(2)} (venda)</p>
                     <p><strong>Estoque Total:</strong> ${totalEstoque} | <strong>Gôndola Total:</strong> ${totalGondola}</p>
-                    <p><strong>Cores:</strong></p>
-                    <div>${cores}</div>
+
+                    <div class="cores-section">
+                        <h4>🎨 CORES CADASTRADAS:</h4>
+                        ${coresHtml}
+                    </div>
+
                     <button class="button danger" onclick="deletarProduto('${produto.id}')" style="margin-top: 10px; width: 100%;">🗑️ Deletar</button>
                 `;
                 produtosList.appendChild(div);
@@ -370,7 +389,8 @@
             const produtoId = document.getElementById('reposicaoProduto').value;
             const corSelect = document.getElementById('reposicaoCor');
             corSelect.innerHTML = '<option value="">-- Escolha uma cor --</option>';
-            if (produtoId && produtos[produtoId]) {
+
+            if (produtoId && produtos[produtoId] && produtos[produtoId].variacoes) {
                 Object.keys(produtos[produtoId].variacoes).forEach(cor => {
                     const option = document.createElement('option');
                     option.value = cor;
@@ -384,7 +404,7 @@
         window.carregarDadosReposicao = function() {
             const produtoId = document.getElementById('reposicaoProduto').value;
             const cor = document.getElementById('reposicaoCor').value;
-            if (produtoId && cor && produtos[produtoId]) {
+            if (produtoId && cor && produtos[produtoId] && produtos[produtoId].variacoes[cor]) {
                 const v = produtos[produtoId].variacoes[cor];
                 document.getElementById('estoqueReposicao').textContent = v.estoque;
                 document.getElementById('gondolaReposicao').textContent = v.gondola;
