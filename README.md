@@ -7,22 +7,20 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #a8597e 0%, #6b3d5c 100%); min-height: 100vh; padding: 20px; }
-        .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); overflow: hidden; }
+        .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); }
         .header { background: linear-gradient(135deg, #a8597e 0%, #6b3d5c 100%); color: white; padding: 30px; text-align: center; }
         .header h1 { font-size: 28px; margin-bottom: 5px; }
-        .header p { font-size: 14px; opacity: 0.9; }
         .content { padding: 30px; }
         .section { margin-bottom: 40px; }
-        .section h2 { color: #a8597e; margin-bottom: 20px; font-size: 22px; border-bottom: 2px solid #a8597e; padding-bottom: 10px; }
+        .section h2 { color: #a8597e; margin-bottom: 20px; border-bottom: 2px solid #a8597e; padding-bottom: 10px; }
         .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #a8597e; font-size: 14px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #a8597e; }
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #a8597e; box-shadow: 0 0 0 3px rgba(168, 89, 126, 0.1); }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .button { background: linear-gradient(135deg, #a8597e 0%, #6b3d5c 100%); color: white; padding: 12px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.2s ease; }
+        .button { background: linear-gradient(135deg, #a8597e 0%, #6b3d5c 100%); color: white; padding: 12px 30px; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; }
         .button:hover { transform: translateY(-2px); }
         .button.danger { background: #e74c3c; }
-        .button.danger:hover { background: #c0392b; }
         .button.add { width: 100%; margin-top: 10px; }
         .variations-container { background: #f9f9f9; padding: 20px; border-radius: 5px; margin-top: 20px; border-left: 4px solid #a8597e; }
         .variation-item { background: white; padding: 15px; border-radius: 5px; margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: flex-end; }
@@ -30,7 +28,6 @@
         .product-item { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #a8597e; }
         .product-item h3 { color: #a8597e; margin-bottom: 10px; }
         .product-item p { color: #666; font-size: 13px; margin-bottom: 8px; }
-        .product-item .label { font-weight: 600; color: #333; }
         .color-badge { display: inline-block; padding: 6px 12px; background: white; border: 1px solid #a8597e; border-radius: 3px; font-size: 12px; margin-right: 5px; margin-bottom: 5px; }
         .history-item { background: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 15px; border-left: 4px solid #a8597e; }
         .history-item .timestamp { color: #999; font-size: 12px; margin-bottom: 5px; }
@@ -42,14 +39,13 @@
         .alert.error { background: #f8d7da; color: #721c24; }
         .search-box { margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .search-box input, .search-box select { padding: 12px; border: 1px solid #ddd; border-radius: 5px; }
-        .form-cadastro { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>💎 GÉOR – Check-in de Produtos</h1>
-            <p>Controle de Estoque e Gôndola - Bolo Mania</p>
+            <p>Controle de Estoque e Gôndola</p>
         </div>
 
         <div class="content">
@@ -58,7 +54,7 @@
                 <h2>✏️ Cadastro de Produto</h2>
                 <div id="checkinAlert"></div>
 
-                <div class="form-cadastro">
+                <div style="background: #f9f9f9; padding: 20px; border-radius: 8px;">
                     <div class="form-group">
                         <label>NOME / DESCRIÇÃO *</label>
                         <input type="text" id="produtoNome" placeholder="Ex: Anel Solitário">
@@ -140,7 +136,7 @@
             <div class="section">
                 <h2>🔄 Reposição de Estoque</h2>
                 <div id="reposicaoAlert"></div>
-                <div class="form-cadastro">
+                <div style="background: #fff3cd; padding: 20px; border-radius: 8px; border-left: 4px solid #ffc107;">
                     <div class="form-group">
                         <label>Selecione o Produto *</label>
                         <select id="reposicaoProduto" onchange="carregarCoresReposicao()">
@@ -203,18 +199,13 @@
             const produtosRef = ref(database, 'produtos');
             onValue(produtosRef, (snapshot) => {
                 produtos = snapshot.exists() ? snapshot.val() : {};
-                filtrarProdutos();
                 atualizarSelectReposicao();
+                filtrarProdutos();
             });
 
             const historicoRef = ref(database, 'historico');
             onValue(historicoRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    historico = Object.values(snapshot.val());
-                    historico.sort((a, b) => new Date(b.data) - new Date(a.data));
-                } else {
-                    historico = [];
-                }
+                historico = snapshot.exists() ? Object.values(snapshot.val()).sort((a, b) => new Date(b.data) - new Date(a.data)) : [];
                 atualizarHistorico();
             });
         }
@@ -256,17 +247,10 @@
             }
 
             const produtoId = Date.now().toString();
-            const produtoData = {
-                id: produtoId,
-                nome, codigo, tipo, fornecedor, custo, venda, observacoes,
-                dataCadastro: new Date().toISOString(),
-                variacoes: {}
-            };
+            const produtoData = { id: produtoId, nome, codigo, tipo, fornecedor, custo, venda, observacoes, dataCadastro: new Date().toISOString(), variacoes: {} };
 
             variacoesCadastro.forEach(v => {
-                if (v.cor) {
-                    produtoData.variacoes[v.cor] = { cor: v.cor, estoque: v.estoque, gondola: v.gondola };
-                }
+                if (v.cor) produtoData.variacoes[v.cor] = { cor: v.cor, estoque: v.estoque, gondola: v.gondola };
             });
 
             set(ref(database, `produtos/${produtoId}`), produtoData).then(() => {
@@ -316,13 +300,13 @@
                 div.className = 'product-item';
                 div.innerHTML = `
                     <h3>${produto.nome}</h3>
-                    <p><span class="label">Código:</span> ${produto.codigo}</p>
-                    <p><span class="label">Tipo:</span> ${produto.tipo}</p>
-                    ${produto.fornecedor ? `<p><span class="label">Fornecedor:</span> ${produto.fornecedor}</p>` : ''}
-                    <p><span class="label">Preço:</span> R$ ${produto.custo.toFixed(2)} (custo) | R$ ${produto.venda.toFixed(2)} (venda)</p>
-                    ${produto.observacoes ? `<p><span class="label">Observações:</span> ${produto.observacoes}</p>` : ''}
-                    <p><span class="label">Estoque Total:</span> ${totalEstoque} | <span class="label">Gôndola Total:</span> ${totalGondola}</p>
-                    <p><span class="label">Cores:</span></p>
+                    <p><strong>Código:</strong> ${produto.codigo}</p>
+                    <p><strong>Tipo:</strong> ${produto.tipo}</p>
+                    ${produto.fornecedor ? `<p><strong>Fornecedor:</strong> ${produto.fornecedor}</p>` : ''}
+                    <p><strong>Preço:</strong> R$ ${produto.custo.toFixed(2)} (custo) | R$ ${produto.venda.toFixed(2)} (venda)</p>
+                    ${produto.observacoes ? `<p><strong>Observações:</strong> ${produto.observacoes}</p>` : ''}
+                    <p><strong>Estoque Total:</strong> ${totalEstoque} | <strong>Gôndola Total:</strong> ${totalGondola}</p>
+                    <p><strong>Cores:</strong></p>
                     <div>${cores}</div>
                     <button class="button danger" onclick="deletarProduto('${produto.id}')" style="margin-top: 10px; width: 100%;">🗑️ Deletar</button>
                 `;
@@ -430,11 +414,7 @@
                     const data = new Date(item.data);
                     const div = document.createElement('div');
                     div.className = 'history-item';
-                    div.innerHTML = `
-                        <div class="timestamp">${data.toLocaleString('pt-BR')}</div>
-                        <div class="action">${item.produto} - ${item.cor}</div>
-                        <div class="details">Tipo: ${item.tipo} | Quantidade: ${item.quantidade} | Estoque: ${item.estoqueAnterior} → ${item.estoqueNovo} | Gôndola: ${item.gondolaAnterior} → ${item.gondolaNova}</div>
-                    `;
+                    div.innerHTML = `<div class="timestamp">${data.toLocaleString('pt-BR')}</div><div class="action">${item.produto} - ${item.cor}</div><div class="details">Tipo: ${item.tipo} | Quantidade: ${item.quantidade} | Estoque: ${item.estoqueAnterior} → ${item.estoqueNovo} | Gôndola: ${item.gondolaAnterior} → ${item.gondolaNova}</div>`;
                     historicoList.appendChild(div);
                 });
             }
