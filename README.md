@@ -39,13 +39,20 @@
             margin-bottom: 5px;
         }
 
-        .header p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
         .content {
             padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section h2 {
+            color: #a8597e;
+            margin-bottom: 20px;
+            font-size: 22px;
+            border-bottom: 2px solid #a8597e;
+            padding-bottom: 10px;
         }
 
         .form-group {
@@ -68,6 +75,7 @@
             border: 1px solid #ddd;
             border-radius: 5px;
             font-size: 14px;
+            font-family: inherit;
         }
 
         .form-group input:focus,
@@ -113,16 +121,6 @@
             margin-top: 10px;
         }
 
-        .button.reposicao {
-            background: #27ae60;
-            padding: 8px 16px;
-            font-size: 14px;
-        }
-
-        .button.reposicao:hover {
-            background: #229954;
-        }
-
         .variations-container {
             background: #f9f9f9;
             padding: 20px;
@@ -146,98 +144,59 @@
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 5px;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-
-        .alert.success {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .alert.error {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .section-divider {
-            margin: 40px 0;
-            padding: 20px 0;
-            border-top: 2px solid #eee;
-        }
-
-        .section-divider h2 {
-            color: #a8597e;
-            margin-bottom: 20px;
-        }
-
-        .search-box {
-            margin-bottom: 20px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .search-box input,
-        .search-box select {
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
             font-size: 14px;
         }
 
-        .products-container {
+        .filters {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: 1fr 1fr;
             gap: 20px;
-            margin-top: 20px;
+            margin-bottom: 20px;
         }
 
-        .product-card {
-            background: white;
-            border: 1px solid #eee;
-            border-radius: 8px;
+        .product-item {
+            background: #f9f9f9;
             padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #a8597e;
         }
 
-        .product-card h3 {
+        .product-item h3 {
             color: #a8597e;
             margin-bottom: 10px;
-            font-size: 18px;
         }
 
-        .product-card p {
+        .product-item p {
             color: #666;
             font-size: 13px;
             margin-bottom: 8px;
         }
 
-        .product-card .label {
+        .product-item .label {
             font-weight: 600;
             color: #333;
         }
 
-        .color-info {
-            background: #f9f9f9;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-            font-size: 13px;
+        .color-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: white;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            border-left: 3px solid #a8597e;
         }
 
-        .color-info strong {
-            color: #a8597e;
+        .product-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #999;
+        .product-actions button {
+            flex: 1;
         }
 
         .history-item {
@@ -264,21 +223,51 @@
             font-size: 13px;
             margin-top: 5px;
         }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .reposicao-form {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #ffc107;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>💎 GÉOR – Check-in de Produtos</h1>
-            <p>Controle de Estoque e Gôndola - Bolo Mania</p>
+            <p>Controle de Estoque e Gôndola</p>
         </div>
 
         <div class="content">
-            <!-- CADASTRO DE PRODUTOS -->
-            <h2>✏️ Cadastro de Produto</h2>
-            <div id="cadastroAlert"></div>
+            <!-- SEÇÃO CADASTRO -->
+            <div class="section">
+                <h2>✏️ Cadastro de Produto</h2>
+                <div id="checkinAlert"></div>
 
-            <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
                 <div class="form-group">
                     <label>NOME / DESCRIÇÃO *</label>
                     <input type="text" id="produtoNome" placeholder="Ex: Anel Solitário">
@@ -306,7 +295,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>FORNECEDOR</label>
+                    <label>NÃO SE TRATA DE</label>
                     <input type="text" id="produtoFornecedor" placeholder="Nome do fornecedor">
                 </div>
 
@@ -329,34 +318,42 @@
 
                 <div class="form-group">
                     <label>OBSERVAÇÕES</label>
-                    <textarea id="produtoObservacoes" placeholder="Tamanho, coleção, material..." rows="3"></textarea>
+                    <textarea id="produtoObservacoes" placeholder="Tamanho, coleção, material..." rows="4"></textarea>
                 </div>
 
                 <button class="button" onclick="salvarProduto()" style="width: 100%; margin-top: 20px;">✅ Salvar Produto</button>
             </div>
 
-            <!-- FILTRO E LISTAGEM -->
-            <div class="section-divider">
+            <!-- SEÇÃO PRODUTOS -->
+            <div class="section">
                 <h2>📦 Produtos Cadastrados</h2>
-                <div class="search-box">
-                    <input type="text" id="searchNome" placeholder="🔍 Buscar por nome..." onkeyup="filtrarProdutos()">
-                    <select id="filterTipo" onchange="filtrarProdutos()">
-                        <option value="">Filtrar por tipo...</option>
-                        <option value="Prata 925">Prata 925</option>
-                        <option value="Semijoia">Semijoia</option>
-                        <option value="Bijouteria">Bijouteria</option>
-                        <option value="Óculos">Óculos</option>
-                        <option value="Relógio">Relógio</option>
-                        <option value="Aço Inoxidável">Aço Inoxidável</option>
-                        <option value="Folheado">Folheado</option>
-                        <option value="Bolsa">Bolsa</option>
-                    </select>
+
+                <div class="filters">
+                    <div class="form-group">
+                        <label>🔍 Buscar por nome...</label>
+                        <input type="text" id="searchNome" placeholder="Digite o nome do produto" onkeyup="filtrarProdutos()">
+                    </div>
+                    <div class="form-group">
+                        <label>🏷️ Filtrar por tipo...</label>
+                        <select id="filterTipo" onchange="filtrarProdutos()">
+                            <option value="">Todos os tipos</option>
+                            <option value="Prata 925">Prata 925</option>
+                            <option value="Semijoia">Semijoia</option>
+                            <option value="Bijouteria">Bijouteria</option>
+                            <option value="Óculos">Óculos</option>
+                            <option value="Relógio">Relógio</option>
+                            <option value="Aço Inoxidável">Aço Inoxidável</option>
+                            <option value="Folheado">Folheado</option>
+                            <option value="Bolsa">Bolsa</option>
+                        </select>
+                    </div>
                 </div>
-                <div id="produtosList" class="products-container"></div>
+
+                <div id="produtosList"></div>
             </div>
 
-            <!-- HISTÓRICO -->
-            <div class="section-divider">
+            <!-- SEÇÃO HISTÓRICO -->
+            <div class="section">
                 <h2>📜 Histórico de Movimentos</h2>
                 <div id="historicoList"></div>
             </div>
@@ -384,19 +381,16 @@
         let produtos = {};
         let historico = [];
         let variacoesCadastro = [];
-        let produtosFiltrados = {};
 
         function carregarDados() {
             const produtosRef = ref(database, 'produtos');
             onValue(produtosRef, (snapshot) => {
                 if (snapshot.exists()) {
                     produtos = snapshot.val();
-                    produtosFiltrados = JSON.parse(JSON.stringify(produtos));
                 } else {
                     produtos = {};
-                    produtosFiltrados = {};
                 }
-                atualizarInterface();
+                filtrarProdutos();
             });
 
             const historicoRef = ref(database, 'historico');
@@ -440,7 +434,7 @@
             const custo = parseFloat(document.getElementById('produtoCusto').value) || 0;
             const venda = parseFloat(document.getElementById('produtoVenda').value) || 0;
             const observacoes = document.getElementById('produtoObservacoes').value.trim();
-            const alert = document.getElementById('cadastroAlert');
+            const alert = document.getElementById('checkinAlert');
 
             if (!nome || !codigo || !tipo || variacoesCadastro.length === 0) {
                 alert.innerHTML = '<div class="alert error">Por favor, preencha os campos obrigatórios!</div>';
@@ -481,104 +475,125 @@
         window.filtrarProdutos = function() {
             const nome = document.getElementById('searchNome').value.toLowerCase();
             const tipo = document.getElementById('filterTipo').value;
-            produtosFiltrados = {};
+            const produtosList = document.getElementById('produtosList');
 
-            Object.values(produtos).forEach(produto => {
-                const matchNome = produto.nome.toLowerCase().includes(nome);
-                const matchTipo = !tipo || produto.tipo === tipo;
-                if (matchNome && matchTipo) {
-                    produtosFiltrados[produto.id] = produto;
-                }
+            produtosList.innerHTML = '';
+
+            let produtosEncontrados = Object.values(produtos).filter(produto => {
+                const nomeMatch = produto.nome.toLowerCase().includes(nome) || produto.codigo.toLowerCase().includes(nome);
+                const tipoMatch = !tipo || produto.tipo === tipo;
+                return nomeMatch && tipoMatch;
             });
-            atualizarInterface();
-        };
 
-        window.reporEstoque = function(produtoId, cor) {
-            const produto = produtos[produtoId];
-            const variacao = produto.variacoes[cor];
-
-            const quantidade = prompt(`Quantas unidades entram em gôndola?\nEstoque atual: ${variacao.estoque}\nGôndola atual: ${variacao.gondola}`);
-
-            if (quantidade === null || quantidade === '') return;
-
-            const qtd = parseInt(quantidade);
-            if (isNaN(qtd) || qtd <= 0) {
-                alert('Quantidade inválida!');
+            if (produtosEncontrados.length === 0) {
+                produtosList.innerHTML = '<div class="empty-state">Nenhum produto encontrado.</div>';
                 return;
             }
 
-            if (qtd > variacao.estoque) {
+            produtosEncontrados.forEach(produto => {
+                let totalEstoque = 0, totalGondola = 0, cores = '';
+                Object.values(produto.variacoes).forEach(variacao => {
+                    cores += `<div class="color-badge">${variacao.cor} (E: ${variacao.estoque} | G: ${variacao.gondola})</div>`;
+                    totalEstoque += variacao.estoque;
+                    totalGondola += variacao.gondola;
+                });
+
+                const div = document.createElement('div');
+                div.className = 'product-item';
+                div.innerHTML = `
+                    <h3>${produto.nome}</h3>
+                    <p><span class="label">Código:</span> ${produto.codigo}</p>
+                    <p><span class="label">Tipo:</span> ${produto.tipo}</p>
+                    ${produto.fornecedor ? `<p><span class="label">Fornecedor:</span> ${produto.fornecedor}</p>` : ''}
+                    <p><span class="label">Preço:</span> R$ ${produto.custo.toFixed(2)} (custo) | R$ ${produto.venda.toFixed(2)} (venda)</p>
+                    ${produto.observacoes ? `<p><span class="label">Observações:</span> ${produto.observacoes}</p>` : ''}
+                    <p><span class="label">Estoque Total:</span> ${totalEstoque} | <span class="label">Gôndola Total:</span> ${totalGondola}</p>
+                    <p><span class="label">Cores:</span></p>
+                    <div>${cores}</div>
+                    <div class="product-actions">
+                        <button class="button" onclick="abrirReposicao('${produto.id}')">🔄 Repor Estoque</button>
+                        <button class="button danger" onclick="deletarProduto('${produto.id}')">🗑️ Deletar</button>
+                    </div>
+                    <div id="reposicao-${produto.id}" style="display: none;" class="reposicao-form">
+                        <div class="form-group">
+                            <label>Selecione a Cor *</label>
+                            <select id="cor-${produto.id}" onchange="carregarDadosReposicao('${produto.id}')">
+                                <option value="">-- Escolha uma cor --</option>
+                                ${Object.keys(produto.variacoes).map(cor => `<option value="${cor}">${cor}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div id="dados-${produto.id}" style="display: none; background: white; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
+                            <p><strong>Estoque Atual:</strong> <span id="estoque-${produto.id}">0</span></p>
+                            <p><strong>Gôndola Atual:</strong> <span id="gondola-${produto.id}">0</span></p>
+                        </div>
+                        <div class="form-group">
+                            <label>Quantidade que Saiu do Estoque *</label>
+                            <input type="number" id="qtd-${produto.id}" placeholder="0" min="0">
+                        </div>
+                        <button class="button" onclick="registrarSaida('${produto.id}')">📤 Registrar Saída</button>
+                        <button class="button secondary" onclick="fecharReposicao('${produto.id}')" style="margin-top: 10px; width: 100%;">Cancelar</button>
+                    </div>
+                `;
+                produtosList.appendChild(div);
+            });
+        };
+
+        window.abrirReposicao = function(produtoId) {
+            document.getElementById(`reposicao-${produtoId}`).style.display = 'block';
+        };
+
+        window.fecharReposicao = function(produtoId) {
+            document.getElementById(`reposicao-${produtoId}`).style.display = 'none';
+        };
+
+        window.carregarDadosReposicao = function(produtoId) {
+            const cor = document.getElementById(`cor-${produtoId}`).value;
+            if (cor && produtos[produtoId]) {
+                const variacao = produtos[produtoId].variacoes[cor];
+                document.getElementById(`estoque-${produtoId}`).textContent = variacao.estoque;
+                document.getElementById(`gondola-${produtoId}`).textContent = variacao.gondola;
+                document.getElementById(`dados-${produtoId}`).style.display = 'block';
+            }
+        };
+
+        window.registrarSaida = function(produtoId) {
+            const cor = document.getElementById(`cor-${produtoId}`).value;
+            const quantidade = parseInt(document.getElementById(`qtd-${produtoId}`).value) || 0;
+
+            if (!cor || quantidade <= 0) {
+                alert('Preencha todos os campos!');
+                return;
+            }
+
+            const variacao = produtos[produtoId].variacoes[cor];
+            if (quantidade > variacao.estoque) {
                 alert('Quantidade maior que o estoque!');
                 return;
             }
 
-            const novoEstoque = variacao.estoque - qtd;
-            const novaGondola = variacao.gondola + qtd;
-
+            const novoEstoque = variacao.estoque - quantidade;
             set(ref(database, `produtos/${produtoId}/variacoes/${cor}`), {
-                cor, estoque: novoEstoque, gondola: novaGondola
+                cor, estoque: novoEstoque, gondola: variacao.gondola
             }).then(() => {
                 const historicoEntry = {
                     id: Date.now().toString(),
                     data: new Date().toISOString(),
-                    produto: produto.nome,
-                    cor,
-                    quantidade: qtd,
+                    produto: produtos[produtoId].nome,
+                    cor, quantidade,
                     estoqueAnterior: variacao.estoque,
-                    estoqueNovo: novoEstoque,
-                    gondolaAnterior: variacao.gondola,
-                    gondolaNova: novaGondola
+                    estoqueNovo: novoEstoque
                 };
-                push(ref(database, 'historico'), historicoEntry);
+                push(ref(database, 'historico'), historicoEntry).then(() => {
+                    alert('Saída registrada com sucesso!');
+                    fecharReposicao(produtoId);
+                    document.getElementById(`qtd-${produtoId}`).value = '';
+                    document.getElementById(`cor-${produtoId}`).value = '';
+                });
             });
         };
 
-        function atualizarInterface() {
-            const produtosList = document.getElementById('produtosList');
-            produtosList.innerHTML = '';
-
-            if (Object.keys(produtosFiltrados).length === 0) {
-                produtosList.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">Nenhum produto encontrado.</div>';
-            } else {
-                Object.values(produtosFiltrados).forEach(produto => {
-                    let totalEstoque = 0, totalGondola = 0;
-                    let coresHtml = '';
-
-                    Object.values(produto.variacoes).forEach(variacao => {
-                        totalEstoque += variacao.estoque;
-                        totalGondola += variacao.gondola;
-                        coresHtml += `
-                            <div class="color-info">
-                                <strong>${variacao.cor}</strong><br>
-                                Estoque: ${variacao.estoque} | Gôndola: ${variacao.gondola}
-                                <button class="button reposicao" onclick="reporEstoque('${produto.id}', '${variacao.cor}')" style="margin-top: 8px; width: 100%;">🔄 Repor</button>
-                            </div>
-                        `;
-                    });
-
-                    const card = document.createElement('div');
-                    card.className = 'product-card';
-                    card.innerHTML = `
-                        <h3>${produto.nome}</h3>
-                        <p><span class="label">Código:</span> ${produto.codigo}</p>
-                        <p><span class="label">Tipo:</span> ${produto.tipo}</p>
-                        ${produto.fornecedor ? `<p><span class="label">Fornecedor:</span> ${produto.fornecedor}</p>` : ''}
-                        <p><span class="label">Preço:</span> R$ ${produto.custo.toFixed(2)} (custo) | R$ ${produto.venda.toFixed(2)} (venda)</p>
-                        <p><span class="label">Total Estoque:</span> ${totalEstoque} | <span class="label">Total Gôndola:</span> ${totalGondola}</p>
-                        ${produto.observacoes ? `<p><span class="label">Observações:</span> ${produto.observacoes}</p>` : ''}
-                        <div style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
-                            <strong style="color: #a8597e;">Cores:</strong>
-                            ${coresHtml}
-                        </div>
-                        <button class="button danger" onclick="deletarProduto('${produto.id}')" style="width: 100%; margin-top: 15px;">🗑️ Deletar</button>
-                    `;
-                    produtosList.appendChild(card);
-                });
-            }
-        }
-
         window.deletarProduto = function(produtoId) {
-            if (confirm('Tem certeza que deseja deletar este produto?')) {
+            if (confirm('Deletar este produto?')) {
                 set(ref(database, `produtos/${produtoId}`), null);
             }
         };
@@ -586,7 +601,6 @@
         function atualizarHistorico() {
             const historicoList = document.getElementById('historicoList');
             historicoList.innerHTML = '';
-
             if (historico.length === 0) {
                 historicoList.innerHTML = '<div class="empty-state">Nenhum movimento registrado.</div>';
             } else {
@@ -597,11 +611,7 @@
                     div.innerHTML = `
                         <div class="timestamp">${data.toLocaleString('pt-BR')}</div>
                         <div class="action">${item.produto} - ${item.cor}</div>
-                        <div class="details">
-                            Quantidade movida: ${item.quantidade} unidades<br>
-                            Estoque: ${item.estoqueAnterior} → ${item.estoqueNovo}<br>
-                            Gôndola: ${item.gondolaAnterior} → ${item.gondolaNova}
-                        </div>
+                        <div class="details">Saída: ${item.quantidade} unidades | Estoque: ${item.estoqueAnterior} → ${item.estoqueNovo}</div>
                     `;
                     historicoList.appendChild(div);
                 });
