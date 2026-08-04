@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GÉOR - Check-in de Produtos</title>
+    <title>GÉOR – Check-in de Produtos</title>
     <style>
         * {
             margin: 0;
@@ -19,7 +19,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;
@@ -48,6 +48,7 @@
             display: flex;
             border-bottom: 2px solid #eee;
             background: #f9f9f9;
+            overflow-x: auto;
         }
 
         .tab-button {
@@ -61,6 +62,8 @@
             color: #666;
             transition: all 0.3s ease;
             border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            min-width: 150px;
         }
 
         .tab-button.active {
@@ -198,11 +201,29 @@
             font-size: 14px;
         }
 
-        .products-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
+        .products-table {
+            width: 100%;
+            border-collapse: collapse;
             margin-top: 20px;
+            background: white;
+        }
+
+        .products-table th {
+            background: #a8597e;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #ddd;
+        }
+
+        .products-table td {
+            padding: 15px;
+            border: 1px solid #ddd;
+        }
+
+        .products-table tr:hover {
+            background: #f9f9f9;
         }
 
         .product-card {
@@ -211,12 +232,7 @@
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s ease;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            margin-bottom: 20px;
         }
 
         .product-card h3 {
@@ -352,13 +368,25 @@
         table tr:hover {
             background: #f9f9f9;
         }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>💎 GÉOR – Check-in de Produtos</h1>
-            <p>Cadastre variações de cores com estoque e gôndola</p>
+            <p>Controle de Estoque e Gôndola</p>
         </div>
 
         <div class="tabs">
@@ -388,12 +416,14 @@
                         <label>TIPO *</label>
                         <select id="produtoTipo">
                             <option value="">Selecione...</option>
-                            <option value="Bolo">Bolo</option>
-                            <option value="Doce">Doce</option>
-                            <option value="Salgado">Salgado</option>
-                            <option value="Bebida">Bebida</option>
-                            <option value="Acessório">Acessório</option>
-                            <option value="Outro">Outro</option>
+                            <option value="Prata 925">Prata 925</option>
+                            <option value="Semijoia">Semijoia</option>
+                            <option value="Bijouteria">Bijouteria</option>
+                            <option value="Óculos">Óculos</option>
+                            <option value="Relógio">Relógio</option>
+                            <option value="Aço Inoxidável">Aço Inoxidável</option>
+                            <option value="Folheado">Folheado</option>
+                            <option value="Bolsa">Bolsa</option>
                         </select>
                     </div>
                 </div>
@@ -432,7 +462,10 @@
         <!-- ABA PRODUTOS -->
         <div id="produtos" class="tab-content">
             <h2>📦 Produtos Cadastrados</h2>
-            <div id="produtosList" class="products-list"></div>
+            <div class="search-box">
+                <input type="text" id="searchProduto" placeholder="🔍 Buscar por nome, código ou tipo..." onkeyup="filtrarProdutos()">
+            </div>
+            <div id="produtosList"></div>
         </div>
 
         <!-- ABA RELATÓRIO -->
@@ -470,6 +503,7 @@
         let produtos = {};
         let historico = [];
         let variacoesCadastro = [];
+        let produtosFiltrados = {};
 
         // Carregar dados do Firebase
         function carregarDados() {
@@ -477,8 +511,10 @@
             onValue(produtosRef, (snapshot) => {
                 if (snapshot.exists()) {
                     produtos = snapshot.val();
+                    produtosFiltrados = produtos;
                 } else {
                     produtos = {};
+                    produtosFiltrados = {};
                 }
                 atualizarInterface();
             });
@@ -584,40 +620,78 @@
             });
         };
 
+        window.filtrarProdutos = function() {
+            const termo = document.getElementById('searchProduto').value.toLowerCase();
+            produtosFiltrados = {};
+
+            Object.values(produtos).forEach(produto => {
+                if (produto.nome.toLowerCase().includes(termo) || 
+                    produto.codigo.toLowerCase().includes(termo) || 
+                    produto.tipo.toLowerCase().includes(termo)) {
+                    produtosFiltrados[produto.id] = produto;
+                }
+            });
+
+            atualizarInterface();
+        };
+
         function atualizarInterface() {
             const produtosList = document.getElementById('produtosList');
             produtosList.innerHTML = '';
 
-            if (Object.keys(produtos).length === 0) {
-                produtosList.innerHTML = '<div class="empty-state"><p>Nenhum produto cadastrado ainda.</p></div>';
+            if (Object.keys(produtosFiltrados).length === 0) {
+                produtosList.innerHTML = '<div class="empty-state"><p>Nenhum produto encontrado.</p></div>';
             } else {
-                Object.values(produtos).forEach(produto => {
-                    const card = document.createElement('div');
-                    card.className = 'product-card';
-                    let coresHtml = '';
+                let html = `
+                    <table class="products-table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Código</th>
+                                <th>Tipo</th>
+                                <th>Cores</th>
+                                <th>Estoque Total</th>
+                                <th>Gôndola Total</th>
+                                <th>Preço Custo</th>
+                                <th>Preço Venda</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                Object.values(produtosFiltrados).forEach(produto => {
                     let totalEstoque = 0;
                     let totalGondola = 0;
+                    let cores = '';
 
                     Object.values(produto.variacoes).forEach(variacao => {
-                        coresHtml += `<div class="color-badge">${variacao.cor}: E${variacao.estoque} | G${variacao.gondola}</div>`;
+                        cores += `<div class="color-badge">${variacao.cor} (E: ${variacao.estoque} | G: ${variacao.gondola})</div>`;
                         totalEstoque += variacao.estoque;
                         totalGondola += variacao.gondola;
                     });
 
-                    card.innerHTML = `
-                        <h3>${produto.nome}</h3>
-                        <p><span class="label">Código:</span> ${produto.codigo}</p>
-                        <p><span class="label">Tipo:</span> ${produto.tipo}</p>
-                        ${produto.fornecedor ? `<p><span class="label">Fornecedor:</span> ${produto.fornecedor}</p>` : ''}
-                        <p><span class="label">Preço:</span> R$ ${produto.custo.toFixed(2)} (custo) | R$ ${produto.venda.toFixed(2)} (venda)</p>
-                        ${produto.observacoes ? `<p><span class="label">Observações:</span> ${produto.observacoes}</p>` : ''}
-                        <p><span class="label">Estoque Total:</span> ${totalEstoque} | <span class="label">Gôndola Total:</span> ${totalGondola}</p>
-                        <p><span class="label">Cores:</span></p>
-                        <div>${coresHtml}</div>
-                        <button class="button danger" onclick="deletarProduto('${produto.id}')" style="margin-top: 10px; width: 100%;">🗑️ Deletar</button>
+                    html += `
+                        <tr>
+                            <td><strong>${produto.nome}</strong></td>
+                            <td>${produto.codigo}</td>
+                            <td>${produto.tipo}</td>
+                            <td>${cores}</td>
+                            <td><strong>${totalEstoque}</strong></td>
+                            <td><strong>${totalGondola}</strong></td>
+                            <td>R$ ${produto.custo.toFixed(2)}</td>
+                            <td>R$ ${produto.venda.toFixed(2)}</td>
+                            <td><button class="button danger" onclick="deletarProduto('${produto.id}')">🗑️</button></td>
+                        </tr>
                     `;
-                    produtosList.appendChild(card);
                 });
+
+                html += `
+                        </tbody>
+                    </table>
+                `;
+
+                produtosList.innerHTML = html;
             }
         }
 
@@ -693,14 +767,17 @@
             } else {
                 Object.values(produtos).forEach(produto => {
                     const div = document.createElement('div');
-                    div.style.marginBottom = '20px';
-                    let html = `<h3>${produto.nome}</h3><table>
-                        <tr>
-                            <th>Cor</th>
-                            <th>Estoque</th>
-                            <th>Gôndola</th>
-                            <th>Total</th>
-                        </tr>`;
+                    div.className = 'product-card';
+                    let html = `<h3>${produto.nome}</h3>
+                        <p><span class="label">Código:</span> ${produto.codigo}</p>
+                        <p><span class="label">Tipo:</span> ${produto.tipo}</p>
+                        <table>
+                            <tr>
+                                <th>Cor</th>
+                                <th>Estoque</th>
+                                <th>Gôndola</th>
+                                <th>Total</th>
+                            </tr>`;
 
                     Object.values(produto.variacoes).forEach(variacao => {
                         html += `<tr>
