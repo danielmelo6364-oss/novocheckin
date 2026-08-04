@@ -1,316 +1,725 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>💎 GÉOR — Check-in de Produtos</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;}
-:root{--rose:#c9748a;--rose-light:#f7e8ec;--rose-dark:#9e4f63;--dark:#1a1a2e;--brown:#4a3728;--text:#2d2d2d;--muted:#9e8575;--bg:#fdf5f7;}
-body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:16px;}
-.container{max-width:1200px;margin:0 auto;}
-header{background:linear-gradient(135deg,var(--dark),var(--rose-dark));color:#fff;padding:24px;border-radius:16px;margin-bottom:24px;}
-.h-title{font-size:32px;font-weight:900;margin-bottom:4px;}
-.h-sub{font-size:13px;opacity:.85;}
-.tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;}
-.tab-btn{padding:12px 20px;border:none;border-radius:10px;background:#fff;color:var(--rose-dark);font-weight:700;cursor:pointer;font-size:14px;}
-.tab-btn.active{background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;}
-.tab-content{display:none;}
-.tab-content.active{display:block;}
-.card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(0,0,0,.08);margin-bottom:20px;}
-.card h2{font-size:18px;font-weight:700;color:var(--brown);margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--rose-light);}
-.form-group{margin-bottom:16px;}
-.form-group label{display:block;font-size:12px;font-weight:700;color:var(--rose-dark);margin-bottom:6px;text-transform:uppercase;}
-input[type=text],input[type=number],select,textarea{width:100%;padding:11px 14px;border:1.5px solid #e0d0d5;border-radius:10px;font-size:14px;color:var(--text);background:#fdf5f7;font-family:inherit;}
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);background:#fff;}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-@media(max-width:768px){.grid2{grid-template-columns:1fr;}}
-.cores-container{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
-.cor-item{background:#fdf5f7;border:1.5px solid #e0d0d5;border-radius:10px;padding:12px;}
-.cor-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
-.cor-item-nome{font-weight:700;color:var(--rose-dark);}
-.cor-item-btn{background:#dc3545;color:#fff;border:none;border-radius:4px;padding:4px 8px;cursor:pointer;font-size:11px;font-weight:700;}
-.cor-qtd-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.cor-qtd-grid input{font-size:12px;padding:8px;}
-.cor-qtd-grid label{font-size:10px;color:var(--muted);margin-bottom:2px;}
-.cor-input{display:flex;gap:8px;align-items:flex-end;}
-.cor-input input{flex:1;}
-.cor-input button{background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;}
-.btn-primary{width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;font-size:15px;font-weight:700;cursor:pointer;}
-.btn-primary:hover{opacity:.9;}
-.produtos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
-.produto-card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 12px rgba(0,0,0,.08);border-left:4px solid var(--rose);}
-.produto-card h3{font-size:14px;font-weight:700;margin-bottom:4px;}
-.produto-card .ref{font-size:11px;color:var(--muted);margin-bottom:8px;}
-.produto-card .tipo{display:inline-block;background:var(--rose-light);color:var(--rose-dark);padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px;}
-.produto-card .preco{font-size:16px;font-weight:800;color:var(--rose-dark);margin-bottom:8px;}
-.cor-info{font-size:11px;color:var(--muted);margin-bottom:4px;padding:4px;background:var(--rose-light);border-radius:4px;}
-.btn-delete{background:#dc3545;color:#fff;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;width:100%;}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px;}
-.stat-box{background:linear-gradient(135deg,var(--rose-light),#fff);border-left:4px solid var(--rose);border-radius:10px;padding:16px;text-align:center;}
-.stat-box .num{font-size:28px;font-weight:800;color:var(--rose-dark);}
-.stat-box .lbl{font-size:11px;color:var(--muted);margin-top:4px;}
-.empty{text-align:center;padding:40px 20px;color:var(--muted);}
-.empty-icon{font-size:48px;margin-bottom:12px;}
-.toast{position:fixed;bottom:24px;right:24px;background:var(--dark);color:#fff;padding:12px 20px;border-radius:10px;font-size:13px;font-weight:600;opacity:0;transform:translateY(8px);transition:all .3s;z-index:999;}
-.toast.show{opacity:1;transform:translateY(0);}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GÉOR - Check-in de Produtos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8597e 0%, #6b3d5c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #a8597e 0%, #6b3d5c 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #eee;
+            background: #f9f9f9;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-button.active {
+            color: #a8597e;
+            border-bottom-color: #a8597e;
+        }
+
+        .tab-button:hover {
+            background: #f0f0f0;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #a8597e;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #a8597e;
+            box-shadow: 0 0 0 3px rgba(168, 89, 126, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-row.three {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .button {
+            background: linear-gradient(135deg, #a8597e 0%, #6b3d5c 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button.secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .button.secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .button.danger {
+            background: #e74c3c;
+        }
+
+        .button.danger:hover {
+            background: #c0392b;
+        }
+
+        .button.add {
+            background: #a8597e;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .variations-container {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border-left: 4px solid #a8597e;
+        }
+
+        .variation-item {
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid #a8597e;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .variation-item input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .products-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .product-card {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-card h3 {
+            color: #a8597e;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .product-card p {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .product-card .label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .color-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            border-left: 3px solid #a8597e;
+        }
+
+        .history-item {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border-left: 4px solid #a8597e;
+        }
+
+        .history-item .timestamp {
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .history-item .action {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .history-item .details {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #a8597e 0%, #6b3d5c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .checkin-form {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background: #f0f0f0;
+            font-weight: 600;
+            color: #333;
+        }
+
+        table tr:hover {
+            background: #f9f9f9;
+        }
+    </style>
 </head>
 <body>
-
-<div class="container">
-  <header>
-    <div class="h-title">💎 GÉOR — Check-in de Produtos</div>
-    <div class="h-sub">Registre variações de cores com estoque e gôndola</div>
-  </header>
-
-  <div class="tabs">
-    <button class="tab-btn active" onclick="abrirAba('checkin')">📦 Check-in</button>
-    <button class="tab-btn" onclick="abrirAba('produtos')">🗂️ Produtos</button>
-  </div>
-
-  <div id="checkin" class="tab-content active">
-    <div class="card">
-      <h2>📝 Novo Registro de Produto</h2>
-
-      <div class="form-group">
-        <label>Nome / Descrição *</label>
-        <input type="text" id="f-nome" placeholder="Ex: Anel Solitário"/>
-      </div>
-
-      <div class="grid2">
-        <div class="form-group">
-          <label>Código / Referência *</label>
-          <input type="text" id="f-ref" placeholder="Ex: GR-001"/>
+    <div class="container">
+        <div class="header">
+            <h1>💎 GÉOR – Check-in de Produtos</h1>
+            <p>Cadastre variações de cores com estoque e gôndola</p>
         </div>
-        <div class="form-group">
-          <label>Tipo *</label>
-          <select id="f-tipo">
-            <option value="">Selecione...</option>
-            <option>Bijuteria</option>
-            <option>Prata 925</option>
-            <option>Semijoia</option>
-            <option>Bolsa</option>
-            <option>Óculos</option>
-            <option>Relógios</option>
-          </select>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('checkin')">✅ Check-in</button>
+            <button class="tab-button" onclick="switchTab('produtos')">📦 Produtos</button>
+            <button class="tab-button" onclick="switchTab('relatorio')">📊 Relatório</button>
+            <button class="tab-button" onclick="switchTab('historico')">📜 Histórico</button>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label>Fornecedor</label>
-        <input type="text" id="f-forn" placeholder="Nome do fornecedor"/>
-      </div>
+        <!-- ABA CHECK-IN -->
+        <div id="checkin" class="tab-content active">
+            <h2>✏️ Novo Registro de Produto</h2>
+            <div id="checkinAlert"></div>
 
-      <div class="grid2">
-        <div class="form-group">
-          <label>Preço de Custo (R$)</label>
-          <input type="number" id="f-custo" min="0" step="0.01" placeholder="0,00"/>
+            <div class="checkin-form">
+                <div class="form-group">
+                    <label>NOME / DESCRIÇÃO *</label>
+                    <input type="text" id="produtoNome" placeholder="Ex: Anel Solitário">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>CÓDIGO / PROPRIETÁRIO *</label>
+                        <input type="text" id="produtoCodigo" placeholder="Ex: GR-001">
+                    </div>
+                    <div class="form-group">
+                        <label>TIPO *</label>
+                        <select id="produtoTipo">
+                            <option value="">Selecione...</option>
+                            <option value="Bolo">Bolo</option>
+                            <option value="Doce">Doce</option>
+                            <option value="Salgado">Salgado</option>
+                            <option value="Bebida">Bebida</option>
+                            <option value="Acessório">Acessório</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>NÃO SE TRATA DE</label>
+                    <input type="text" id="produtoFornecedor" placeholder="Nome do fornecedor">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>PREÇO DE CUSTO (R$)</label>
+                        <input type="number" id="produtoCusto" placeholder="0,00" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>PREÇO DE VENDA (R$)</label>
+                        <input type="number" id="produtoVenda" placeholder="0,00" step="0.01" min="0">
+                    </div>
+                </div>
+
+                <div class="variations-container">
+                    <h3>VARIAÇÕES DE CORES COM ESTOQUE *</h3>
+                    <div id="variacoesList"></div>
+                    <button class="button add" onclick="adicionarVariacao()">+ Adicionar Cor</button>
+                </div>
+
+                <div class="form-group">
+                    <label>OBSERVAÇÕES</label>
+                    <textarea id="produtoObservacoes" placeholder="Tamanho, coleção, material..." rows="4"></textarea>
+                </div>
+
+                <button class="button" onclick="salvarProduto()" style="width: 100%; margin-top: 20px;">✅ Check-in do Registrador</button>
+            </div>
         </div>
-        <div class="form-group">
-          <label>Preço de Venda (R$)</label>
-          <input type="number" id="f-preco" min="0" step="0.01" placeholder="0,00"/>
+
+        <!-- ABA PRODUTOS -->
+        <div id="produtos" class="tab-content">
+            <h2>📦 Produtos Cadastrados</h2>
+            <div id="produtosList" class="products-list"></div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label>Variações de Cores com Estoque *</label>
-        <div class="cores-container" id="cores-list"></div>
-        <div class="cor-input">
-          <input type="text" id="cor-input" placeholder="Ex: Ouro"/>
-          <button type="button" onclick="adicionarCor()">+ Adicionar</button>
+        <!-- ABA RELATÓRIO -->
+        <div id="relatorio" class="tab-content">
+            <h2>📊 Relatório de Estoque</h2>
+            <div id="stats" class="stats"></div>
+            <div id="relatorioContent"></div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label>Observações</label>
-        <textarea id="f-obs" placeholder="Tamanho, coleção, material..." style="min-height:80px;"></textarea>
-      </div>
-
-      <button class="btn-primary" type="button" onclick="registrarProduto()">✅ Check-in do Registrador</button>
+        <!-- ABA HISTÓRICO -->
+        <div id="historico" class="tab-content">
+            <h2>📜 Histórico de Movimentos</h2>
+            <div id="historicoList"></div>
+        </div>
     </div>
-  </div>
 
-  <div id="produtos" class="tab-content">
-    <div class="card">
-      <h2>🗂️ Produtos Registrados</h2>
-      <div class="stats-grid" id="stats-produtos"></div>
-      <div class="produtos-grid" id="produtos-grid"></div>
-      <div id="produtos-empty" class="empty" style="display:none;">
-        <div class="empty-icon">📦</div>
-        <p>Nenhum produto registrado</p>
-      </div>
-    </div>
-  </div>
-</div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { getDatabase, ref, push, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
 
-<div id="toast" class="toast"></div>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDnMsL-dhv3uM2tP3B-IcJUFHVo1MmoW2k",
+            authDomain: "checkin-4760f.firebaseapp.com",
+            databaseURL: "https://checkin-4760f-default-rtdb.firebaseio.com",
+            projectId: "checkin-4760f",
+            storageBucket: "checkin-4760f.firebasestorage.app",
+            messagingSenderId: "207981324873",
+            appId: "1:207981324873:web:41709da7ffc12cc4966d98",
+            measurementId: "G-T2K2EPDTVN"
+        };
 
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
 
-<script>
-const firebaseConfig = {
-  apiKey: "AIzaSyDnMsL-dhv3uM2tP3B-IcJUFHVo1MmoW2k",
-  authDomain: "checkin-4760f.firebaseapp.com",
-  projectId: "checkin-4760f",
-  storageBucket: "checkin-4760f.appspot.com",
-  messagingSenderId: "207981324873",
-  appId: "1:207981324873:web:00ccce2c26033b3f966d98",
-  databaseURL: "https://checkin-4760f-default-rtdb.firebaseio.com"
-};
+        let produtos = {};
+        let historico = [];
+        let variacoesCadastro = [];
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+        // Carregar dados do Firebase
+        function carregarDados() {
+            const produtosRef = ref(database, 'produtos');
+            onValue(produtosRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    produtos = snapshot.val();
+                } else {
+                    produtos = {};
+                }
+                atualizarInterface();
+            });
 
-let coresTemp = [];
+            const historicoRef = ref(database, 'historico');
+            onValue(historicoRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    historico = Object.values(snapshot.val());
+                    historico.sort((a, b) => new Date(b.data) - new Date(a.data));
+                } else {
+                    historico = [];
+                }
+                atualizarHistorico();
+            });
+        }
 
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
+        window.switchTab = function(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
 
-function abrirAba(aba) {
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById(aba).classList.add('active');
-  event.target.classList.add('active');
-  if (aba === 'produtos') carregarProdutos();
-}
+            if (tab === 'relatorio') {
+                atualizarRelatorio();
+            }
+        };
 
-function adicionarCor() {
-  const cor = document.getElementById('cor-input').value.trim();
-  if (!cor) { toast('⚠️ Digite uma cor'); return; }
-  if (coresTemp.find(c => c.nome === cor)) { toast('⚠️ Cor já existe'); return; }
-  coresTemp.push({ nome: cor, gondola: 0, estoque: 0 });
-  renderCores();
-  document.getElementById('cor-input').value = '';
-}
+        window.adicionarVariacao = function() {
+            variacoesCadastro.push({ cor: '', estoque: 0, gondola: 0 });
+            renderizarVariacoes();
+        };
 
-function removerCor(idx) {
-  coresTemp.splice(idx, 1);
-  renderCores();
-}
+        function renderizarVariacoes() {
+            const container = document.getElementById('variacoesList');
+            container.innerHTML = '';
 
-function atualizarCorQtd(idx, campo, valor) {
-  coresTemp[idx][campo] = parseInt(valor) || 0;
-}
+            variacoesCadastro.forEach((v, index) => {
+                const div = document.createElement('div');
+                div.className = 'variation-item';
+                div.innerHTML = `
+                    <input type="text" placeholder="Cor" value="${v.cor}" onchange="variacoesCadastro[${index}].cor = this.value">
+                    <input type="number" placeholder="Estoque" value="${v.estoque}" min="0" onchange="variacoesCadastro[${index}].estoque = parseInt(this.value) || 0">
+                    <input type="number" placeholder="Gôndola" value="${v.gondola}" min="0" onchange="variacoesCadastro[${index}].gondola = parseInt(this.value) || 0">
+                    <button class="button danger" onclick="variacoesCadastro.splice(${index}, 1); renderizarVariacoes();">✕</button>
+                `;
+                container.appendChild(div);
+            });
+        }
 
-function renderCores() {
-  const el = document.getElementById('cores-list');
-  el.innerHTML = coresTemp.map((cor, i) => `
-    <div class="cor-item">
-      <div class="cor-item-header">
-        <div class="cor-item-nome">${cor.nome}</div>
-        <button type="button" class="cor-item-btn" onclick="removerCor(${i})">✕</button>
-      </div>
-      <div class="cor-qtd-grid">
-        <div>
-          <label>Gôndola</label>
-          <input type="number" min="0" value="${cor.gondola}" onchange="atualizarCorQtd(${i}, 'gondola', this.value)"/>
-        </div>
-        <div>
-          <label>Estoque</label>
-          <input type="number" min="0" value="${cor.estoque}" onchange="atualizarCorQtd(${i}, 'estoque', this.value)"/>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
+        window.salvarProduto = function() {
+            const nome = document.getElementById('produtoNome').value.trim();
+            const codigo = document.getElementById('produtoCodigo').value.trim();
+            const tipo = document.getElementById('produtoTipo').value;
+            const fornecedor = document.getElementById('produtoFornecedor').value.trim();
+            const custo = parseFloat(document.getElementById('produtoCusto').value) || 0;
+            const venda = parseFloat(document.getElementById('produtoVenda').value) || 0;
+            const observacoes = document.getElementById('produtoObservacoes').value.trim();
+            const alert = document.getElementById('checkinAlert');
 
-function registrarProduto() {
-  const nome = document.getElementById('f-nome').value.trim();
-  const ref = document.getElementById('f-ref').value.trim();
-  const tipo = document.getElementById('f-tipo').value;
+            if (!nome || !codigo || !tipo || variacoesCadastro.length === 0) {
+                alert.innerHTML = '<div class="alert error">Por favor, preencha os campos obrigatórios e adicione pelo menos uma variação de cor.</div>';
+                return;
+            }
 
-  if (!nome) { toast('⚠️ Informe o nome'); return; }
-  if (!ref) { toast('⚠️ Informe o código'); return; }
-  if (!tipo) { toast('⚠️ Selecione o tipo'); return; }
-  if (coresTemp.length === 0) { toast('⚠️ Adicione uma cor'); return; }
+            const produtoId = Date.now().toString();
+            const produtoData = {
+                id: produtoId,
+                nome: nome,
+                codigo: codigo,
+                tipo: tipo,
+                fornecedor: fornecedor,
+                custo: custo,
+                venda: venda,
+                observacoes: observacoes,
+                dataCadastro: new Date().toISOString(),
+                variacoes: {}
+            };
 
-  const produto = {
-    data: new Date().toISOString(),
-    nome: nome,
-    ref: ref,
-    tipo: tipo,
-    fornecedor: document.getElementById('f-forn').value.trim(),
-    custo: parseFloat(document.getElementById('f-custo').value) || 0,
-    preco: parseFloat(document.getElementById('f-preco').value) || 0,
-    obs: document.getElementById('f-obs').value.trim(),
-    cores: coresTemp.map(c => ({nome: c.nome, gondola: c.gondola, estoque: c.estoque}))
-  };
+            variacoesCadastro.forEach((v) => {
+                if (v.cor) {
+                    produtoData.variacoes[v.cor] = {
+                        cor: v.cor,
+                        estoque: v.estoque,
+                        gondola: v.gondola
+                    };
+                }
+            });
 
-  db.ref('produtos').push(produto).then(() => {
-    document.getElementById('f-nome').value = '';
-    document.getElementById('f-ref').value = '';
-    document.getElementById('f-tipo').value = '';
-    document.getElementById('f-forn').value = '';
-    document.getElementById('f-custo').value = '';
-    document.getElementById('f-preco').value = '';
-    document.getElementById('f-obs').value = '';
-    coresTemp = [];
-    renderCores();
-    toast('✅ Registrado com sucesso!');
-  }).catch(err => {
-    toast('❌ Erro: ' + err.message);
-  });
-}
+            set(ref(database, `produtos/${produtoId}`), produtoData).then(() => {
+                alert.innerHTML = '<div class="alert success">✅ Produto salvo com sucesso!</div>';
+                document.getElementById('produtoNome').value = '';
+                document.getElementById('produtoCodigo').value = '';
+                document.getElementById('produtoTipo').value = '';
+                document.getElementById('produtoFornecedor').value = '';
+                document.getElementById('produtoCusto').value = '';
+                document.getElementById('produtoVenda').value = '';
+                document.getElementById('produtoObservacoes').value = '';
+                variacoesCadastro = [];
+                renderizarVariacoes();
+                setTimeout(() => { alert.innerHTML = ''; }, 3000);
+            }).catch((error) => {
+                alert.innerHTML = `<div class="alert error">❌ Erro ao salvar: ${error.message}</div>`;
+            });
+        };
 
-function carregarProdutos() {
-  db.ref('produtos').once('value').then(snapshot => {
-    const dados = snapshot.val();
-    const lista = dados ? Object.entries(dados).map(([key, val]) => ({id: key, ...val})) : [];
+        function atualizarInterface() {
+            const produtosList = document.getElementById('produtosList');
+            produtosList.innerHTML = '';
 
-    const stats = document.getElementById('stats-produtos');
-    const grid = document.getElementById('produtos-grid');
-    const empty = document.getElementById('produtos-empty');
+            if (Object.keys(produtos).length === 0) {
+                produtosList.innerHTML = '<div class="empty-state"><p>Nenhum produto cadastrado ainda.</p></div>';
+            } else {
+                Object.values(produtos).forEach(produto => {
+                    const card = document.createElement('div');
+                    card.className = 'product-card';
+                    let coresHtml = '';
+                    let totalEstoque = 0;
+                    let totalGondola = 0;
 
-    if (!lista.length) {
-      empty.style.display = 'block';
-      grid.innerHTML = '';
-      stats.innerHTML = '';
-      return;
-    }
+                    Object.values(produto.variacoes).forEach(variacao => {
+                        coresHtml += `<div class="color-badge">${variacao.cor}: E${variacao.estoque} | G${variacao.gondola}</div>`;
+                        totalEstoque += variacao.estoque;
+                        totalGondola += variacao.gondola;
+                    });
 
-    empty.style.display = 'none';
-    const total = lista.length;
-    const totalItens = lista.reduce((a, p) => a + (p.cores || []).reduce((b, c) => b + (c.gondola || 0) + (c.estoque || 0), 0), 0);
-    const totalValor = lista.reduce((a, p) => a + ((p.preco || 0) * ((p.cores || []).reduce((b, c) => b + (c.gondola || 0) + (c.estoque || 0), 0))), 0);
+                    card.innerHTML = `
+                        <h3>${produto.nome}</h3>
+                        <p><span class="label">Código:</span> ${produto.codigo}</p>
+                        <p><span class="label">Tipo:</span> ${produto.tipo}</p>
+                        ${produto.fornecedor ? `<p><span class="label">Fornecedor:</span> ${produto.fornecedor}</p>` : ''}
+                        <p><span class="label">Preço:</span> R$ ${produto.custo.toFixed(2)} (custo) | R$ ${produto.venda.toFixed(2)} (venda)</p>
+                        ${produto.observacoes ? `<p><span class="label">Observações:</span> ${produto.observacoes}</p>` : ''}
+                        <p><span class="label">Estoque Total:</span> ${totalEstoque} | <span class="label">Gôndola Total:</span> ${totalGondola}</p>
+                        <p><span class="label">Cores:</span></p>
+                        <div>${coresHtml}</div>
+                        <button class="button danger" onclick="deletarProduto('${produto.id}')" style="margin-top: 10px; width: 100%;">🗑️ Deletar</button>
+                    `;
+                    produtosList.appendChild(card);
+                });
+            }
+        }
 
-    stats.innerHTML = `
-      <div class="stat-box"><div class="num">${total}</div><div class="lbl">Produtos</div></div>
-      <div class="stat-box"><div class="num">${totalItens}</div><div class="lbl">Itens</div></div>
-      <div class="stat-box"><div class="num">R$ ${totalValor.toFixed(2).replace('.', ',')}</div><div class="lbl">Valor</div></div>`;
+        window.deletarProduto = function(produtoId) {
+            if (confirm('Tem certeza que deseja deletar este produto?')) {
+                set(ref(database, `produtos/${produtoId}`), null);
+            }
+        };
 
-    grid.innerHTML = lista.map(p => `
-      <div class="produto-card">
-        <h3>${p.nome}</h3>
-        <div class="ref">📦 ${p.ref}</div>
-        <div class="tipo">${p.tipo}</div>
-        <div class="preco">R$ ${(p.preco || 0).toFixed(2).replace('.', ',')}</div>
-        <div style="margin-top:12px;border-top:1px solid #f0e0e5;padding-top:12px;">
-          ${(p.cores || []).map(c => `<div class="cor-info"><strong>${c.nome}</strong> | 🛒 ${c.gondola || 0} | 📦 ${c.estoque || 0}</div>`).join('')}
-        </div>
-        <button class="btn-delete" style="margin-top:8px;" onclick="deletarProduto('${p.id}')">🗑️ Deletar</button>
-      </div>
-    `).join('');
-  }).catch(err => {
-    toast('❌ Erro ao carregar');
-  });
-}
+        function atualizarHistorico() {
+            const historicoList = document.getElementById('historicoList');
+            historicoList.innerHTML = '';
 
-function deletarProduto(id) {
-  if (!confirm('Deletar este produto?')) return;
-  db.ref(`produtos/${id}`).remove().then(() => {
-    toast('✅ Deletado!');
-    carregarProdutos();
-  }).catch(err => {
-    toast('❌ Erro ao deletar');
-  });
-}
-</script>
+            if (historico.length === 0) {
+                historicoList.innerHTML = '<div class="empty-state"><p>Nenhum movimento registrado ainda.</p></div>';
+            } else {
+                historico.forEach(item => {
+                    const data = new Date(item.data);
+                    const div = document.createElement('div');
+                    div.className = 'history-item';
+                    div.innerHTML = `
+                        <div class="timestamp">${data.toLocaleString('pt-BR')}</div>
+                        <div class="action">${item.produto} - ${item.cor}</div>
+                        <div class="details">
+                            Quantidade movida: ${item.quantidade} unidades<br>
+                            Estoque: ${item.estoqueAnterior} → ${item.estoqueNovo}<br>
+                            Gôndola: ${item.gondolaAnterior} → ${item.gondolaNova}
+                        </div>
+                    `;
+                    historicoList.appendChild(div);
+                });
+            }
+        }
 
+        function atualizarRelatorio() {
+            const statsDiv = document.getElementById('stats');
+            const relatorioContent = document.getElementById('relatorioContent');
+
+            let totalProdutos = Object.keys(produtos).length;
+            let totalEstoque = 0;
+            let totalGondola = 0;
+            let totalMovimentos = historico.length;
+
+            Object.values(produtos).forEach(produto => {
+                Object.values(produto.variacoes).forEach(variacao => {
+                    totalEstoque += variacao.estoque;
+                    totalGondola += variacao.gondola;
+                });
+            });
+
+            statsDiv.innerHTML = `
+                <div class="stat-card">
+                    <div class="number">${totalProdutos}</div>
+                    <div class="label">Produtos Cadastrados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">${totalEstoque}</div>
+                    <div class="label">Total em Estoque</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">${totalGondola}</div>
+                    <div class="label">Total em Gôndola</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">${totalMovimentos}</div>
+                    <div class="label">Movimentos Registrados</div>
+                </div>
+            `;
+
+            relatorioContent.innerHTML = '';
+            if (Object.keys(produtos).length === 0) {
+                relatorioContent.innerHTML = '<div class="empty-state"><p>Nenhum produto para exibir.</p></div>';
+            } else {
+                Object.values(produtos).forEach(produto => {
+                    const div = document.createElement('div');
+                    div.style.marginBottom = '20px';
+                    let html = `<h3>${produto.nome}</h3><table>
+                        <tr>
+                            <th>Cor</th>
+                            <th>Estoque</th>
+                            <th>Gôndola</th>
+                            <th>Total</th>
+                        </tr>`;
+
+                    Object.values(produto.variacoes).forEach(variacao => {
+                        html += `<tr>
+                            <td>${variacao.cor}</td>
+                            <td>${variacao.estoque}</td>
+                            <td>${variacao.gondola}</td>
+                            <td>${variacao.estoque + variacao.gondola}</td>
+                        </tr>`;
+                    });
+
+                    html += '</table>';
+                    div.innerHTML = html;
+                    relatorioContent.appendChild(div);
+                });
+            }
+        }
+
+        // Inicializar
+        carregarDados();
+    </script>
 </body>
 </html>
