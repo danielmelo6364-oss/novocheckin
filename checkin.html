@@ -146,7 +146,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
         <textarea id="f-obs" placeholder="Tamanho, coleção, material..." style="min-height:80px;"></textarea>
       </div>
 
-      <button class="btn-primary" type="button" onclick="registrarProduto()">✅ Registrar Check-in</button>
+      <button class="btn-primary" type="button" onclick="registrarProduto()">✅ Check-in do Registrador</button>
     </div>
   </div>
 
@@ -165,11 +165,11 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 
 <div id="toast" class="toast"></div>
 
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
-import { getDatabase, ref, push, onValue, remove } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js';
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js';
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js"></script>
 
+<script>
 const firebaseConfig = {
   apiKey: "AIzaSyDnMsL-dhv3uM2tP3B-IcJUFHVo1MmoW2k",
   authDomain: "checkin-4760f.firebaseapp.com",
@@ -180,9 +180,9 @@ const firebaseConfig = {
   databaseURL: "https://checkin-4760f-default-rtdb.firebaseio.com"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const storage = getStorage(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const storage = firebase.storage();
 
 let coresTemp = [];
 let fotoFile = null;
@@ -255,7 +255,7 @@ function renderCores() {
   `).join('');
 }
 
-async function registrarProduto() {
+function registrarProduto() {
   const nome = document.getElementById('f-nome').value.trim();
   const ref = document.getElementById('f-ref').value.trim();
   const tipo = document.getElementById('f-tipo').value;
@@ -265,55 +265,65 @@ async function registrarProduto() {
   if (!tipo) { toast('⚠️ Selecione o tipo'); return; }
   if (coresTemp.length === 0) { toast('⚠️ Adicione uma cor'); return; }
 
+  toast('⏳ Salvando produto...');
+
   let fotoURL = null;
 
   if (fotoFile) {
-    try {
-      const fileName = `${Date.now()}_${fotoFile.name}`;
-      const fileRef = storageRef(storage, `produtos/${fileName}`);
-      await uploadBytes(fileRef, fotoFile);
-      fotoURL = await getDownloadURL(fileRef);
-    } catch (err) {
-      toast('❌ Erro ao salvar foto: ' + err.message);
-      return;
-    }
+    const fileName = `${Date.now()}_${fotoFile.name}`;
+    const fileRef = storage.ref().child(`produtos/${fileName}`);
+    fileRef.put(fotoFile).then(snapshot => {
+      return snapshot.ref.getDownloadURL();
+    }).then(url => {
+      fotoURL = url;
+      salvarProduto(nome, ref, tipo, fotoURL);
+    }).catch(err => {
+      toast('❌ Erro ao salvar foto');
+      console.error(err);
+    });
+  } else {
+    salvarProduto(nome, ref, tipo, null);
   }
+}
 
+function salvarProduto(nome, ref, tipo, fotoURL) {
   const produto = {
     data: new Date().toISOString(),
-    nome,
-    ref,
-    tipo,
+    nome: nome,
+    ref: ref,
+    tipo: tipo,
     fornecedor: document.getElementById('f-forn').value.trim(),
     custo: parseFloat(document.getElementById('f-custo').value) || 0,
     preco: parseFloat(document.getElementById('f-preco').value) || 0,
     obs: document.getElementById('f-obs').value.trim(),
-    cores: coresTemp.map(c => ({...c})),
+    cores: coresTemp.map(c => ({nome: c.nome, gondola: c.gondola, estoque: c.estoque})),
     foto: fotoURL
   };
 
-  try {
-    await push(ref(db, 'produtos'), produto);
-    document.getElementById('f-nome').value = '';
-    document.getElementById('f-ref').value = '';
-    document.getElementById('f-tipo').value = '';
-    document.getElementById('f-forn').value = '';
-    document.getElementById('f-custo').value = '';
-    document.getElementById('f-preco').value = '';
-    document.getElementById('f-obs').value = '';
-    document.getElementById('preview-img').style.display = 'none';
-    document.getElementById('foto-input').value = '';
-    coresTemp = [];
-    renderCores();
-    fotoFile = null;
-    toast('✅ Produto registrado com sucesso!');
-  } catch (err) {
-    toast('❌ Erro: ' + err.message);
-  }
+  db.ref('produtos').push(produto, function(err) {
+    if (err) {
+      toast('❌ Erro ao salvar: ' + err.message);
+      console.error(err);
+    } else {
+      document.getElementById('f-nome').value = '';
+      document.getElementById('f-ref').value = '';
+      document.getElementById('f-tipo').value = '';
+      document.getElementById('f-forn').value = '';
+      document.getElementById('f-custo').value = '';
+      document.getElementById('f-preco').value = '';
+      document.getElementById('f-obs').value = '';
+      document.getElementById('preview-img').style.display = 'none';
+      document.getElementById('foto-input').value = '';
+      coresTemp = [];
+      renderCores();
+      fotoFile = null;
+      toast('✅ Produto registrado com sucesso!');
+    }
+  });
 }
 
 function carregarProdutos() {
-  onValue(ref(db, 'produtos'), snapshot => {
+  db.ref('produtos').once('value', function(snapshot) {
     const dados = snapshot.val();
     const lista = dados ? Object.entries(dados).map(([key, val]) => ({id: key, ...val})) : [];
 
@@ -354,16 +364,17 @@ function carregarProdutos() {
   });
 }
 
-window.deletarProduto = async function(id) {
+function deletarProduto(id) {
   if (!confirm('Deletar este produto?')) return;
-  try {
-    await remove(ref(db, `produtos/${id}`));
-    toast('✅ Deletado!');
-    carregarProdutos();
-  } catch (err) {
-    toast('❌ Erro: ' + err.message);
-  }
-};
+  db.ref(`produtos/${id}`).remove(function(err) {
+    if (err) {
+      toast('❌ Erro ao deletar');
+    } else {
+      toast('✅ Deletado!');
+      carregarProdutos();
+    }
+  });
+}
 </script>
 
 </body>
