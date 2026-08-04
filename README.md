@@ -36,12 +36,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 .cor-input{display:flex;gap:8px;align-items:flex-end;}
 .cor-input input{flex:1;}
 .cor-input button{background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px;}
-.btn-primary{width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;font-size:15px;font-weight:700;cursor:pointer;position:relative;z-index:10;}
+.btn-primary{width:100%;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--rose),var(--rose-dark));color:#fff;font-size:15px;font-weight:700;cursor:pointer;}
 .btn-primary:hover{opacity:.9;}
-.btn-primary:active{transform:scale(0.98);}
 .produtos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
 .produto-card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 12px rgba(0,0,0,.08);border-left:4px solid var(--rose);}
-.produto-card .no-img{width:100%;height:160px;background:var(--rose-light);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:48px;margin-bottom:12px;}
 .produto-card h3{font-size:14px;font-weight:700;margin-bottom:4px;}
 .produto-card .ref{font-size:11px;color:var(--muted);margin-bottom:8px;}
 .produto-card .tipo{display:inline-block;background:var(--rose-light);color:var(--rose-dark);padding:2px 8px;border-radius:6px;font-size:10px;font-weight:700;margin-bottom:8px;}
@@ -129,7 +127,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
         <textarea id="f-obs" placeholder="Tamanho, coleção, material..." style="min-height:80px;"></textarea>
       </div>
 
-      <button class="btn-primary" type="button" onclick="registrarProduto()">✅ Registrar Check-in</button>
+      <button class="btn-primary" type="button" onclick="registrarProduto()">✅ Check-in do Registrador</button>
     </div>
   </div>
 
@@ -288,9 +286,8 @@ function carregarProdutos() {
 
     grid.innerHTML = lista.map(p => `
       <div class="produto-card">
-        <div class="no-img">💍</div>
         <h3>${p.nome}</h3>
-        <div class="ref">${p.ref}</div>
+        <div class="ref">📦 ${p.ref}</div>
         <div class="tipo">${p.tipo}</div>
         <div class="preco">R$ ${(p.preco || 0).toFixed(2).replace('.', ',')}</div>
         <div style="margin-top:12px;border-top:1px solid #f0e0e5;padding-top:12px;">
@@ -305,12 +302,12 @@ function carregarProdutos() {
 }
 
 function deletarProduto(id) {
-  if (!confirm('Deletar?')) return;
+  if (!confirm('Deletar este produto?')) return;
   db.ref(`produtos/${id}`).remove().then(() => {
     toast('✅ Deletado!');
     carregarProdutos();
   }).catch(err => {
-    toast('❌ Erro');
+    toast('❌ Erro ao deletar');
   });
 }
 </script>
