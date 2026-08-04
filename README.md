@@ -195,20 +195,30 @@
         let historico = [];
         let variacoesCadastro = [];
 
-        function carregarDados() {
-            const produtosRef = ref(database, 'produtos');
-            onValue(produtosRef, (snapshot) => {
-                produtos = snapshot.exists() ? snapshot.val() : {};
-                atualizarSelectReposicao();
-                filtrarProdutos();
-            });
+        // CARREGAR DADOS DO FIREBASE EM TEMPO REAL
+        const produtosRef = ref(database, 'produtos');
+        onValue(produtosRef, (snapshot) => {
+            console.log('Carregando produtos...');
+            if (snapshot.exists()) {
+                produtos = snapshot.val();
+                console.log('Produtos carregados:', produtos);
+            } else {
+                produtos = {};
+                console.log('Nenhum produto encontrado');
+            }
+            atualizarSelectReposicao();
+            filtrarProdutos();
+        });
 
-            const historicoRef = ref(database, 'historico');
-            onValue(historicoRef, (snapshot) => {
-                historico = snapshot.exists() ? Object.values(snapshot.val()).sort((a, b) => new Date(b.data) - new Date(a.data)) : [];
-                atualizarHistorico();
-            });
-        }
+        const historicoRef = ref(database, 'historico');
+        onValue(historicoRef, (snapshot) => {
+            if (snapshot.exists()) {
+                historico = Object.values(snapshot.val()).sort((a, b) => new Date(b.data) - new Date(a.data));
+            } else {
+                historico = [];
+            }
+            atualizarHistorico();
+        });
 
         window.adicionarVariacao = function() {
             variacoesCadastro.push({ cor: '', estoque: 0, gondola: 0 });
@@ -247,10 +257,17 @@
             }
 
             const produtoId = Date.now().toString();
-            const produtoData = { id: produtoId, nome, codigo, tipo, fornecedor, custo, venda, observacoes, dataCadastro: new Date().toISOString(), variacoes: {} };
+            const produtoData = {
+                id: produtoId,
+                nome, codigo, tipo, fornecedor, custo, venda, observacoes,
+                dataCadastro: new Date().toISOString(),
+                variacoes: {}
+            };
 
             variacoesCadastro.forEach(v => {
-                if (v.cor) produtoData.variacoes[v.cor] = { cor: v.cor, estoque: v.estoque, gondola: v.gondola };
+                if (v.cor) {
+                    produtoData.variacoes[v.cor] = { cor: v.cor, estoque: v.estoque, gondola: v.gondola };
+                }
             });
 
             set(ref(database, `produtos/${produtoId}`), produtoData).then(() => {
@@ -419,8 +436,6 @@
                 });
             }
         }
-
-        carregarDados();
     </script>
 </body>
 </html>
