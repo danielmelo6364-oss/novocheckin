@@ -17,13 +17,16 @@
         .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #a8597e; box-shadow: 0 0 0 3px rgba(168, 89, 126, 0.1); }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .form-row.three { grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
         .button { background: linear-gradient(135deg, #a8597e 0%, #6b3d5c 100%); color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; }
         .button:hover { transform: translateY(-2px); }
         .button.danger { background: #e74c3c; }
+        .button.success { background: #27ae60; }
         .button.add { width: 100%; margin-top: 10px; }
         .variations { background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid #a8597e; }
-        .variation-item { background: white; padding: 10px; border-radius: 5px; margin-bottom: 10px; display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: flex-end; }
-        .variation-item input { padding: 8px; border: 1px solid #ddd; border-radius: 5px; }
+        .variation-item { background: white; padding: 10px; border-radius: 5px; margin-bottom: 10px; display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: center; border-left: 3px solid #a8597e; }
+        .variation-item p { margin: 0; color: #333; font-size: 13px; }
+        .variation-item strong { color: #a8597e; }
         .product-item { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid #a8597e; }
         .product-item h3 { color: #a8597e; margin-bottom: 8px; }
         .product-item p { color: #666; font-size: 12px; margin-bottom: 5px; }
@@ -39,6 +42,8 @@
         .search-box { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
         .search-box input, .search-box select { padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
         .form-cadastro { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .input-cor-estoque { display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; margin-bottom: 10px; align-items: flex-end; }
+        .input-cor-estoque input { padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -92,9 +97,18 @@
                 </div>
 
                 <div class="variations">
-                    <h3 style="color: #a8597e; margin-bottom: 10px;">CORES E ESTOQUE *</h3>
+                    <h3 style="color: #a8597e; margin-bottom: 15px; font-size: 16px;">CORES E ESTOQUE *</h3>
+
+                    <!-- INPUTS PARA ADICIONAR COR -->
+                    <div class="input-cor-estoque">
+                        <input type="text" id="corInput" placeholder="Nome da cor" maxlength="30">
+                        <input type="number" id="estoqueInput" placeholder="Estoque" min="0" value="0">
+                        <input type="number" id="gondolaInput" placeholder="Gôndola" min="0" value="0">
+                        <button class="button success" onclick="adicionarVariacao()">✓ Adicionar</button>
+                    </div>
+
+                    <!-- LISTA DE CORES ADICIONADAS -->
                     <div id="variacoesList"></div>
-                    <button class="button add" onclick="adicionarVariacao()">+ Adicionar Cor</button>
                 </div>
 
                 <button class="button" onclick="salvarProduto()" style="width: 100%;">✅ Salvar Produto</button>
@@ -199,21 +213,49 @@
         });
 
         window.adicionarVariacao = function() {
-            variacoesCadastro.push({ cor: '', estoque: 0, gondola: 0 });
+            const cor = document.getElementById('corInput').value.trim();
+            const estoque = parseInt(document.getElementById('estoqueInput').value) || 0;
+            const gondola = parseInt(document.getElementById('gondolaInput').value) || 0;
+
+            if (!cor) {
+                alert('Digite o nome da cor!');
+                return;
+            }
+
+            // Verificar se a cor já existe
+            if (variacoesCadastro.some(v => v.cor.toLowerCase() === cor.toLowerCase())) {
+                alert('Esta cor já foi adicionada!');
+                return;
+            }
+
+            variacoesCadastro.push({ cor, estoque, gondola });
+
+            // Limpar inputs
+            document.getElementById('corInput').value = '';
+            document.getElementById('estoqueInput').value = '0';
+            document.getElementById('gondolaInput').value = '0';
+            document.getElementById('corInput').focus();
+
             renderizarVariacoes();
         };
 
         function renderizarVariacoes() {
             const container = document.getElementById('variacoesList');
             container.innerHTML = '';
+
+            if (variacoesCadastro.length === 0) {
+                container.innerHTML = '<p style="color: #999; text-align: center; padding: 10px;">Nenhuma cor adicionada ainda</p>';
+                return;
+            }
+
             variacoesCadastro.forEach((v, index) => {
                 const div = document.createElement('div');
                 div.className = 'variation-item';
                 div.innerHTML = `
-                    <input type="text" placeholder="Cor" value="${v.cor}" onchange="variacoesCadastro[${index}].cor = this.value">
-                    <input type="number" placeholder="Estoque" value="${v.estoque}" min="0" onchange="variacoesCadastro[${index}].estoque = parseInt(this.value) || 0">
-                    <input type="number" placeholder="Gôndola" value="${v.gondola}" min="0" onchange="variacoesCadastro[${index}].gondola = parseInt(this.value) || 0">
-                    <button class="button danger" onclick="variacoesCadastro.splice(${index}, 1); renderizarVariacoes();">✕</button>
+                    <p><strong>${v.cor}</strong></p>
+                    <p>Estoque: <strong>${v.estoque}</strong></p>
+                    <p>Gôndola: <strong>${v.gondola}</strong></p>
+                    <button class="button danger" onclick="variacoesCadastro.splice(${index}, 1); renderizarVariacoes();">✕ Remover</button>
                 `;
                 container.appendChild(div);
             });
@@ -228,7 +270,7 @@
             const alert = document.getElementById('checkinAlert');
 
             if (!nome || !codigo || !tipo || variacoesCadastro.length === 0) {
-                alert.innerHTML = '<div class="alert error">Preencha todos os campos obrigatórios!</div>';
+                alert.innerHTML = '<div class="alert error">Preencha todos os campos obrigatórios e adicione pelo menos uma cor!</div>';
                 return;
             }
 
@@ -236,9 +278,7 @@
             const variacoes = {};
 
             variacoesCadastro.forEach(v => {
-                if (v.cor) {
-                    variacoes[v.cor] = { cor: v.cor, estoque: v.estoque, gondola: v.gondola };
-                }
+                variacoes[v.cor] = { cor: v.cor, estoque: v.estoque, gondola: v.gondola };
             });
 
             set(ref(database, `produtos/${produtoId}`), {
