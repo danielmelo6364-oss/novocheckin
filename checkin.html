@@ -25,12 +25,6 @@ input[type=text],input[type=number],select,textarea{width:100%;padding:11px 14px
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);background:#fff;}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 @media(max-width:768px){.grid2{grid-template-columns:1fr;}}
-.foto-upload{border:2px dashed #e0c0cc;border-radius:12px;padding:24px;text-align:center;cursor:pointer;background:#fdf5f7;}
-.foto-upload:hover{border-color:var(--rose);}
-.foto-upload input{display:none;}
-.foto-icon{font-size:32px;margin-bottom:8px;}
-.foto-text{font-size:12px;color:var(--muted);}
-#preview-img{width:100%;max-height:200px;object-fit:cover;border-radius:10px;margin-top:12px;display:none;}
 .cores-container{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
 .cor-item{background:#fdf5f7;border:1.5px solid #e0d0d5;border-radius:10px;padding:12px;}
 .cor-item-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
@@ -47,7 +41,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 .btn-primary:active{transform:scale(0.98);}
 .produtos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
 .produto-card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 12px rgba(0,0,0,.08);border-left:4px solid var(--rose);}
-.produto-card img{width:100%;height:160px;object-fit:cover;border-radius:8px;margin-bottom:12px;}
 .produto-card .no-img{width:100%;height:160px;background:var(--rose-light);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:48px;margin-bottom:12px;}
 .produto-card h3{font-size:14px;font-weight:700;margin-bottom:4px;}
 .produto-card .ref{font-size:11px;color:var(--muted);margin-bottom:8px;}
@@ -80,17 +73,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 
   <div id="checkin" class="tab-content active">
     <div class="card">
-      <h2>📸 Novo Registro de Produto</h2>
-
-      <div class="form-group">
-        <label>Foto do Produto</label>
-        <div class="foto-upload" onclick="document.getElementById('foto-input').click()">
-          <input type="file" id="foto-input" accept="image/*" capture="environment"/>
-          <div class="foto-icon">📷</div>
-          <div class="foto-text">Toque para tirar foto</div>
-          <img id="preview-img" alt=""/>
-        </div>
-      </div>
+      <h2>📝 Novo Registro de Produto</h2>
 
       <div class="form-group">
         <label>Nome / Descrição *</label>
@@ -146,7 +129,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
         <textarea id="f-obs" placeholder="Tamanho, coleção, material..." style="min-height:80px;"></textarea>
       </div>
 
-      <button class="btn-primary" type="button" onclick="registrarProduto()">✅ Check-in do Registrador</button>
+      <button class="btn-primary" type="button" onclick="registrarProduto()">✅ Registrar Check-in</button>
     </div>
   </div>
 
@@ -167,7 +150,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--rose);ba
 
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage.js"></script>
 
 <script>
 const firebaseConfig = {
@@ -182,10 +164,8 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
-const storage = firebase.storage();
 
 let coresTemp = [];
-let fotoFile = null;
 
 function toast(msg) {
   const t = document.getElementById('toast');
@@ -201,19 +181,6 @@ function abrirAba(aba) {
   event.target.classList.add('active');
   if (aba === 'produtos') carregarProdutos();
 }
-
-document.getElementById('foto-input').addEventListener('change', function(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  fotoFile = file;
-  const reader = new FileReader();
-  reader.onload = function(event) {
-    document.getElementById('preview-img').src = event.target.result;
-    document.getElementById('preview-img').style.display = 'block';
-    toast('✅ Foto selecionada!');
-  };
-  reader.readAsDataURL(file);
-});
 
 function adicionarCor() {
   const cor = document.getElementById('cor-input').value.trim();
@@ -265,8 +232,6 @@ function registrarProduto() {
   if (!tipo) { toast('⚠️ Selecione o tipo'); return; }
   if (coresTemp.length === 0) { toast('⚠️ Adicione uma cor'); return; }
 
-  toast('⏳ Salvando...');
-
   const produto = {
     data: new Date().toISOString(),
     nome: nome,
@@ -276,28 +241,9 @@ function registrarProduto() {
     custo: parseFloat(document.getElementById('f-custo').value) || 0,
     preco: parseFloat(document.getElementById('f-preco').value) || 0,
     obs: document.getElementById('f-obs').value.trim(),
-    cores: coresTemp.map(c => ({nome: c.nome, gondola: c.gondola, estoque: c.estoque})),
-    foto: null
+    cores: coresTemp.map(c => ({nome: c.nome, gondola: c.gondola, estoque: c.estoque}))
   };
 
-  if (fotoFile) {
-    const fileName = `${Date.now()}_${fotoFile.name}`;
-    const fileRef = storage.ref(`produtos/${fileName}`);
-    fileRef.put(fotoFile).then(snapshot => {
-      return snapshot.ref.getDownloadURL();
-    }).then(url => {
-      produto.foto = url;
-      salvarProduto(produto);
-    }).catch(err => {
-      toast('❌ Erro foto');
-      salvarProduto(produto);
-    });
-  } else {
-    salvarProduto(produto);
-  }
-}
-
-function salvarProduto(produto) {
   db.ref('produtos').push(produto).then(() => {
     document.getElementById('f-nome').value = '';
     document.getElementById('f-ref').value = '';
@@ -306,12 +252,9 @@ function salvarProduto(produto) {
     document.getElementById('f-custo').value = '';
     document.getElementById('f-preco').value = '';
     document.getElementById('f-obs').value = '';
-    document.getElementById('preview-img').style.display = 'none';
-    document.getElementById('foto-input').value = '';
     coresTemp = [];
     renderCores();
-    fotoFile = null;
-    toast('✅ Registrado!');
+    toast('✅ Registrado com sucesso!');
   }).catch(err => {
     toast('❌ Erro: ' + err.message);
   });
@@ -345,7 +288,7 @@ function carregarProdutos() {
 
     grid.innerHTML = lista.map(p => `
       <div class="produto-card">
-        ${p.foto ? `<img src="${p.foto}" alt="${p.nome}"/>` : `<div class="no-img">💍</div>`}
+        <div class="no-img">💍</div>
         <h3>${p.nome}</h3>
         <div class="ref">${p.ref}</div>
         <div class="tipo">${p.tipo}</div>
