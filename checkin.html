@@ -265,21 +265,19 @@ function registrarProduto() {
   if (!tipo) { toast('⚠️ Selecione o tipo'); return; }
   if (coresTemp.length === 0) { toast('⚠️ Adicione uma cor'); return; }
 
-  toast('⏳ Salvando produto...');
+  toast('⏳ Salvando...');
 
   let fotoURL = null;
 
   if (fotoFile) {
     const fileName = `${Date.now()}_${fotoFile.name}`;
-    const fileRef = storage.ref().child(`produtos/${fileName}`);
-    fileRef.put(fotoFile).then(snapshot => {
+    storage.ref(`produtos/${fileName}`).put(fotoFile).then(snapshot => {
       return snapshot.ref.getDownloadURL();
     }).then(url => {
       fotoURL = url;
       salvarProduto(nome, ref, tipo, fotoURL);
     }).catch(err => {
-      toast('❌ Erro ao salvar foto');
-      console.error(err);
+      toast('❌ Erro foto');
     });
   } else {
     salvarProduto(nome, ref, tipo, null);
@@ -302,8 +300,7 @@ function salvarProduto(nome, ref, tipo, fotoURL) {
 
   db.ref('produtos').push(produto, function(err) {
     if (err) {
-      toast('❌ Erro ao salvar: ' + err.message);
-      console.error(err);
+      toast('❌ Erro: ' + err.message);
     } else {
       document.getElementById('f-nome').value = '';
       document.getElementById('f-ref').value = '';
@@ -317,7 +314,7 @@ function salvarProduto(nome, ref, tipo, fotoURL) {
       coresTemp = [];
       renderCores();
       fotoFile = null;
-      toast('✅ Produto registrado com sucesso!');
+      toast('✅ Registrado!');
     }
   });
 }
@@ -365,10 +362,10 @@ function carregarProdutos() {
 }
 
 function deletarProduto(id) {
-  if (!confirm('Deletar este produto?')) return;
+  if (!confirm('Deletar?')) return;
   db.ref(`produtos/${id}`).remove(function(err) {
     if (err) {
-      toast('❌ Erro ao deletar');
+      toast('❌ Erro');
     } else {
       toast('✅ Deletado!');
       carregarProdutos();
