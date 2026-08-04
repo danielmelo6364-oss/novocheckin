@@ -5,354 +5,171 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GÉOR – Check-in de Produtos</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #a8597e 0%, #6b3d5c 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #a8597e 0%, #6b3d5c 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-
-        .content {
-            padding: 30px;
-        }
-
-        .section {
-            margin-bottom: 40px;
-        }
-
-        .section h2 {
-            color: #a8597e;
-            margin-bottom: 20px;
-            font-size: 22px;
-            border-bottom: 2px solid #a8597e;
-            padding-bottom: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #a8597e;
-            font-size: 14px;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            font-family: inherit;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #a8597e;
-            box-shadow: 0 0 0 3px rgba(168, 89, 126, 0.1);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .button {
-            background: linear-gradient(135deg, #a8597e 0%, #6b3d5c 100%);
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: transform 0.2s ease;
-        }
-
-        .button:hover {
-            transform: translateY(-2px);
-        }
-
-        .button.danger {
-            background: #e74c3c;
-        }
-
-        .button.danger:hover {
-            background: #c0392b;
-        }
-
-        .button.add {
-            width: 100%;
-            margin-top: 10px;
-        }
-
-        .variations-container {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 5px;
-            margin-top: 20px;
-            border-left: 4px solid #a8597e;
-        }
-
-        .variation-item {
-            background: white;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr auto;
-            gap: 10px;
-            align-items: flex-end;
-        }
-
-        .variation-item input {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-
-        .filters {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .product-item {
-            background: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border-left: 4px solid #a8597e;
-        }
-
-        .product-item h3 {
-            color: #a8597e;
-            margin-bottom: 10px;
-        }
-
-        .product-item p {
-            color: #666;
-            font-size: 13px;
-            margin-bottom: 8px;
-        }
-
-        .product-item .label {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .color-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            background: white;
-            border-radius: 3px;
-            font-size: 12px;
-            margin-right: 5px;
-            margin-bottom: 5px;
-            border-left: 3px solid #a8597e;
-        }
-
-        .product-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .product-actions button {
-            flex: 1;
-        }
-
-        .history-item {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-            border-left: 4px solid #a8597e;
-        }
-
-        .history-item .timestamp {
-            color: #999;
-            font-size: 12px;
-            margin-bottom: 5px;
-        }
-
-        .history-item .action {
-            color: #333;
-            font-weight: 600;
-        }
-
-        .history-item .details {
-            color: #666;
-            font-size: 13px;
-            margin-top: 5px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-        }
-
-        .alert {
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-
-        .alert.success {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .alert.error {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .reposicao-form {
-            background: #fff3cd;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 4px solid #ffc107;
-            margin-top: 15px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #a8597e 0%, #6b3d5c 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #a8597e 0%, #6b3d5c 100%); color: white; padding: 30px; text-align: center; }
+        .header h1 { font-size: 28px; margin-bottom: 5px; }
+        .header p { font-size: 14px; opacity: 0.9; }
+        .content { padding: 30px; }
+        .section { margin-bottom: 40px; }
+        .section h2 { color: #a8597e; margin-bottom: 20px; font-size: 22px; border-bottom: 2px solid #a8597e; padding-bottom: 10px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #a8597e; font-size: 14px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #a8597e; box-shadow: 0 0 0 3px rgba(168, 89, 126, 0.1); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .button { background: linear-gradient(135deg, #a8597e 0%, #6b3d5c 100%); color: white; padding: 12px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: 600; transition: transform 0.2s ease; }
+        .button:hover { transform: translateY(-2px); }
+        .button.danger { background: #e74c3c; }
+        .button.danger:hover { background: #c0392b; }
+        .button.add { width: 100%; margin-top: 10px; }
+        .variations-container { background: #f9f9f9; padding: 20px; border-radius: 5px; margin-top: 20px; border-left: 4px solid #a8597e; }
+        .variation-item { background: white; padding: 15px; border-radius: 5px; margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 10px; align-items: flex-end; }
+        .variation-item input { padding: 8px; border: 1px solid #ddd; border-radius: 5px; }
+        .product-item { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #a8597e; }
+        .product-item h3 { color: #a8597e; margin-bottom: 10px; }
+        .product-item p { color: #666; font-size: 13px; margin-bottom: 8px; }
+        .product-item .label { font-weight: 600; color: #333; }
+        .color-badge { display: inline-block; padding: 6px 12px; background: white; border: 1px solid #a8597e; border-radius: 3px; font-size: 12px; margin-right: 5px; margin-bottom: 5px; }
+        .history-item { background: #f9f9f9; padding: 15px; border-radius: 5px; margin-bottom: 15px; border-left: 4px solid #a8597e; }
+        .history-item .timestamp { color: #999; font-size: 12px; margin-bottom: 5px; }
+        .history-item .action { color: #333; font-weight: 600; }
+        .history-item .details { color: #666; font-size: 13px; margin-top: 5px; }
+        .empty-state { text-align: center; padding: 40px; color: #999; }
+        .alert { padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .alert.success { background: #d4edda; color: #155724; }
+        .alert.error { background: #f8d7da; color: #721c24; }
+        .search-box { margin-bottom: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .search-box input, .search-box select { padding: 12px; border: 1px solid #ddd; border-radius: 5px; }
+        .form-cadastro { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>💎 GÉOR – Check-in de Produtos</h1>
-            <p>Controle de Estoque e Gôndola</p>
+            <p>Controle de Estoque e Gôndola - Bolo Mania</p>
         </div>
 
         <div class="content">
-            <!-- SEÇÃO CADASTRO -->
+            <!-- CADASTRO -->
             <div class="section">
                 <h2>✏️ Cadastro de Produto</h2>
                 <div id="checkinAlert"></div>
 
-                <div class="form-group">
-                    <label>NOME / DESCRIÇÃO *</label>
-                    <input type="text" id="produtoNome" placeholder="Ex: Anel Solitário">
-                </div>
-
-                <div class="form-row">
+                <div class="form-cadastro">
                     <div class="form-group">
-                        <label>CÓDIGO / PROPRIETÁRIO *</label>
-                        <input type="text" id="produtoCodigo" placeholder="Ex: GR-001">
+                        <label>NOME / DESCRIÇÃO *</label>
+                        <input type="text" id="produtoNome" placeholder="Ex: Anel Solitário">
                     </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>CÓDIGO / PROPRIETÁRIO *</label>
+                            <input type="text" id="produtoCodigo" placeholder="Ex: GR-001">
+                        </div>
+                        <div class="form-group">
+                            <label>TIPO *</label>
+                            <select id="produtoTipo">
+                                <option value="">Selecione...</option>
+                                <option value="Prata 925">Prata 925</option>
+                                <option value="Semijoia">Semijoia</option>
+                                <option value="Bijouteria">Bijouteria</option>
+                                <option value="Óculos">Óculos</option>
+                                <option value="Relógio">Relógio</option>
+                                <option value="Aço Inoxidável">Aço Inoxidável</option>
+                                <option value="Folheado">Folheado</option>
+                                <option value="Bolsa">Bolsa</option>
+                            </select>
+                        </div>
+                    </div>
+
                     <div class="form-group">
-                        <label>TIPO *</label>
-                        <select id="produtoTipo">
-                            <option value="">Selecione...</option>
-                            <option value="Prata 925">Prata 925</option>
-                            <option value="Semijoia">Semijoia</option>
-                            <option value="Bijouteria">Bijouteria</option>
-                            <option value="Óculos">Óculos</option>
-                            <option value="Relógio">Relógio</option>
-                            <option value="Aço Inoxidável">Aço Inoxidável</option>
-                            <option value="Folheado">Folheado</option>
-                            <option value="Bolsa">Bolsa</option>
-                        </select>
+                        <label>FORNECEDOR</label>
+                        <input type="text" id="produtoFornecedor" placeholder="Nome do fornecedor">
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label>NÃO SE TRATA DE</label>
-                    <input type="text" id="produtoFornecedor" placeholder="Nome do fornecedor">
-                </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>PREÇO DE CUSTO (R$)</label>
+                            <input type="number" id="produtoCusto" placeholder="0,00" step="0.01" min="0">
+                        </div>
+                        <div class="form-group">
+                            <label>PREÇO DE VENDA (R$)</label>
+                            <input type="number" id="produtoVenda" placeholder="0,00" step="0.01" min="0">
+                        </div>
+                    </div>
 
-                <div class="form-row">
+                    <div class="variations-container">
+                        <h3>VARIAÇÕES DE CORES COM ESTOQUE *</h3>
+                        <div id="variacoesList"></div>
+                        <button class="button add" onclick="adicionarVariacao()">+ Adicionar Cor</button>
+                    </div>
+
                     <div class="form-group">
-                        <label>PREÇO DE CUSTO (R$)</label>
-                        <input type="number" id="produtoCusto" placeholder="0,00" step="0.01" min="0">
+                        <label>OBSERVAÇÕES</label>
+                        <textarea id="produtoObservacoes" placeholder="Tamanho, coleção, material..." rows="4"></textarea>
                     </div>
-                    <div class="form-group">
-                        <label>PREÇO DE VENDA (R$)</label>
-                        <input type="number" id="produtoVenda" placeholder="0,00" step="0.01" min="0">
-                    </div>
-                </div>
 
-                <div class="variations-container">
-                    <h3>VARIAÇÕES DE CORES COM ESTOQUE *</h3>
-                    <div id="variacoesList"></div>
-                    <button class="button add" onclick="adicionarVariacao()">+ Adicionar Cor</button>
+                    <button class="button" onclick="salvarProduto()" style="width: 100%; margin-top: 20px;">✅ Salvar Produto</button>
                 </div>
-
-                <div class="form-group">
-                    <label>OBSERVAÇÕES</label>
-                    <textarea id="produtoObservacoes" placeholder="Tamanho, coleção, material..." rows="4"></textarea>
-                </div>
-
-                <button class="button" onclick="salvarProduto()" style="width: 100%; margin-top: 20px;">✅ Salvar Produto</button>
             </div>
 
-            <!-- SEÇÃO PRODUTOS -->
+            <!-- PRODUTOS -->
             <div class="section">
                 <h2>📦 Produtos Cadastrados</h2>
-
-                <div class="filters">
-                    <div class="form-group">
-                        <label>🔍 Buscar por nome...</label>
-                        <input type="text" id="searchNome" placeholder="Digite o nome do produto" onkeyup="filtrarProdutos()">
-                    </div>
-                    <div class="form-group">
-                        <label>🏷️ Filtrar por tipo...</label>
-                        <select id="filterTipo" onchange="filtrarProdutos()">
-                            <option value="">Todos os tipos</option>
-                            <option value="Prata 925">Prata 925</option>
-                            <option value="Semijoia">Semijoia</option>
-                            <option value="Bijouteria">Bijouteria</option>
-                            <option value="Óculos">Óculos</option>
-                            <option value="Relógio">Relógio</option>
-                            <option value="Aço Inoxidável">Aço Inoxidável</option>
-                            <option value="Folheado">Folheado</option>
-                            <option value="Bolsa">Bolsa</option>
-                        </select>
-                    </div>
+                <div class="search-box">
+                    <input type="text" id="searchProduto" placeholder="🔍 Buscar por nome ou código..." onkeyup="filtrarProdutos()">
+                    <select id="filterTipo" onchange="filtrarProdutos()">
+                        <option value="">Filtrar por tipo...</option>
+                        <option value="Prata 925">Prata 925</option>
+                        <option value="Semijoia">Semijoia</option>
+                        <option value="Bijouteria">Bijouteria</option>
+                        <option value="Óculos">Óculos</option>
+                        <option value="Relógio">Relógio</option>
+                        <option value="Aço Inoxidável">Aço Inoxidável</option>
+                        <option value="Folheado">Folheado</option>
+                        <option value="Bolsa">Bolsa</option>
+                    </select>
                 </div>
-
                 <div id="produtosList"></div>
             </div>
 
-            <!-- SEÇÃO HISTÓRICO -->
+            <!-- REPOSIÇÃO -->
+            <div class="section">
+                <h2>🔄 Reposição de Estoque</h2>
+                <div id="reposicaoAlert"></div>
+                <div class="form-cadastro">
+                    <div class="form-group">
+                        <label>Selecione o Produto *</label>
+                        <select id="reposicaoProduto" onchange="carregarCoresReposicao()">
+                            <option value="">-- Escolha um produto --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Selecione a Cor *</label>
+                        <select id="reposicaoCor" onchange="carregarDadosReposicao()">
+                            <option value="">-- Escolha uma cor --</option>
+                        </select>
+                    </div>
+
+                    <div id="dadosReposicao" style="display: none; background: white; padding: 15px; border-radius: 5px; margin-bottom: 20px; border-left: 4px solid #ffc107;">
+                        <p><strong>Estoque Atual:</strong> <span id="estoqueReposicao">0</span> unidades</p>
+                        <p><strong>Gôndola Atual:</strong> <span id="gondolaReposicao">0</span> unidades</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quantidade que Saiu do Estoque *</label>
+                        <input type="number" id="quantidadeReposicao" placeholder="0" min="0">
+                    </div>
+
+                    <button class="button" onclick="registrarReposicao()" style="width: 100%;">🔄 Registrar Reposição</button>
+                </div>
+            </div>
+
+            <!-- HISTÓRICO -->
             <div class="section">
                 <h2>📜 Histórico de Movimentos</h2>
                 <div id="historicoList"></div>
@@ -385,12 +202,9 @@
         function carregarDados() {
             const produtosRef = ref(database, 'produtos');
             onValue(produtosRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    produtos = snapshot.val();
-                } else {
-                    produtos = {};
-                }
+                produtos = snapshot.exists() ? snapshot.val() : {};
                 filtrarProdutos();
+                atualizarSelectReposicao();
             });
 
             const historicoRef = ref(database, 'historico');
@@ -473,29 +287,29 @@
         };
 
         window.filtrarProdutos = function() {
-            const nome = document.getElementById('searchNome').value.toLowerCase();
+            const termo = document.getElementById('searchProduto').value.toLowerCase();
             const tipo = document.getElementById('filterTipo').value;
             const produtosList = document.getElementById('produtosList');
 
             produtosList.innerHTML = '';
 
-            let produtosEncontrados = Object.values(produtos).filter(produto => {
-                const nomeMatch = produto.nome.toLowerCase().includes(nome) || produto.codigo.toLowerCase().includes(nome);
-                const tipoMatch = !tipo || produto.tipo === tipo;
+            let encontrados = Object.values(produtos).filter(p => {
+                const nomeMatch = p.nome.toLowerCase().includes(termo) || p.codigo.toLowerCase().includes(termo);
+                const tipoMatch = !tipo || p.tipo === tipo;
                 return nomeMatch && tipoMatch;
             });
 
-            if (produtosEncontrados.length === 0) {
+            if (encontrados.length === 0) {
                 produtosList.innerHTML = '<div class="empty-state">Nenhum produto encontrado.</div>';
                 return;
             }
 
-            produtosEncontrados.forEach(produto => {
+            encontrados.forEach(produto => {
                 let totalEstoque = 0, totalGondola = 0, cores = '';
-                Object.values(produto.variacoes).forEach(variacao => {
-                    cores += `<div class="color-badge">${variacao.cor} (E: ${variacao.estoque} | G: ${variacao.gondola})</div>`;
-                    totalEstoque += variacao.estoque;
-                    totalGondola += variacao.gondola;
+                Object.values(produto.variacoes).forEach(v => {
+                    cores += `<div class="color-badge">${v.cor}: E${v.estoque} | G${v.gondola}</div>`;
+                    totalEstoque += v.estoque;
+                    totalGondola += v.gondola;
                 });
 
                 const div = document.createElement('div');
@@ -510,85 +324,93 @@
                     <p><span class="label">Estoque Total:</span> ${totalEstoque} | <span class="label">Gôndola Total:</span> ${totalGondola}</p>
                     <p><span class="label">Cores:</span></p>
                     <div>${cores}</div>
-                    <div class="product-actions">
-                        <button class="button" onclick="abrirReposicao('${produto.id}')">🔄 Repor Estoque</button>
-                        <button class="button danger" onclick="deletarProduto('${produto.id}')">🗑️ Deletar</button>
-                    </div>
-                    <div id="reposicao-${produto.id}" style="display: none;" class="reposicao-form">
-                        <div class="form-group">
-                            <label>Selecione a Cor *</label>
-                            <select id="cor-${produto.id}" onchange="carregarDadosReposicao('${produto.id}')">
-                                <option value="">-- Escolha uma cor --</option>
-                                ${Object.keys(produto.variacoes).map(cor => `<option value="${cor}">${cor}</option>`).join('')}
-                            </select>
-                        </div>
-                        <div id="dados-${produto.id}" style="display: none; background: white; padding: 10px; border-radius: 5px; margin-bottom: 10px;">
-                            <p><strong>Estoque Atual:</strong> <span id="estoque-${produto.id}">0</span></p>
-                            <p><strong>Gôndola Atual:</strong> <span id="gondola-${produto.id}">0</span></p>
-                        </div>
-                        <div class="form-group">
-                            <label>Quantidade que Saiu do Estoque *</label>
-                            <input type="number" id="qtd-${produto.id}" placeholder="0" min="0">
-                        </div>
-                        <button class="button" onclick="registrarSaida('${produto.id}')">📤 Registrar Saída</button>
-                        <button class="button secondary" onclick="fecharReposicao('${produto.id}')" style="margin-top: 10px; width: 100%;">Cancelar</button>
-                    </div>
+                    <button class="button danger" onclick="deletarProduto('${produto.id}')" style="margin-top: 10px; width: 100%;">🗑️ Deletar</button>
                 `;
                 produtosList.appendChild(div);
             });
         };
 
-        window.abrirReposicao = function(produtoId) {
-            document.getElementById(`reposicao-${produtoId}`).style.display = 'block';
+        function atualizarSelectReposicao() {
+            const select = document.getElementById('reposicaoProduto');
+            select.innerHTML = '<option value="">-- Escolha um produto --</option>';
+            Object.values(produtos).forEach(p => {
+                const option = document.createElement('option');
+                option.value = p.id;
+                option.textContent = `${p.nome} (${p.codigo})`;
+                select.appendChild(option);
+            });
+        }
+
+        window.carregarCoresReposicao = function() {
+            const produtoId = document.getElementById('reposicaoProduto').value;
+            const corSelect = document.getElementById('reposicaoCor');
+            corSelect.innerHTML = '<option value="">-- Escolha uma cor --</option>';
+            if (produtoId && produtos[produtoId]) {
+                Object.keys(produtos[produtoId].variacoes).forEach(cor => {
+                    const option = document.createElement('option');
+                    option.value = cor;
+                    option.textContent = cor;
+                    corSelect.appendChild(option);
+                });
+            }
+            document.getElementById('dadosReposicao').style.display = 'none';
         };
 
-        window.fecharReposicao = function(produtoId) {
-            document.getElementById(`reposicao-${produtoId}`).style.display = 'none';
-        };
-
-        window.carregarDadosReposicao = function(produtoId) {
-            const cor = document.getElementById(`cor-${produtoId}`).value;
-            if (cor && produtos[produtoId]) {
-                const variacao = produtos[produtoId].variacoes[cor];
-                document.getElementById(`estoque-${produtoId}`).textContent = variacao.estoque;
-                document.getElementById(`gondola-${produtoId}`).textContent = variacao.gondola;
-                document.getElementById(`dados-${produtoId}`).style.display = 'block';
+        window.carregarDadosReposicao = function() {
+            const produtoId = document.getElementById('reposicaoProduto').value;
+            const cor = document.getElementById('reposicaoCor').value;
+            if (produtoId && cor && produtos[produtoId]) {
+                const v = produtos[produtoId].variacoes[cor];
+                document.getElementById('estoqueReposicao').textContent = v.estoque;
+                document.getElementById('gondolaReposicao').textContent = v.gondola;
+                document.getElementById('dadosReposicao').style.display = 'block';
             }
         };
 
-        window.registrarSaida = function(produtoId) {
-            const cor = document.getElementById(`cor-${produtoId}`).value;
-            const quantidade = parseInt(document.getElementById(`qtd-${produtoId}`).value) || 0;
+        window.registrarReposicao = function() {
+            const produtoId = document.getElementById('reposicaoProduto').value;
+            const cor = document.getElementById('reposicaoCor').value;
+            const quantidade = parseInt(document.getElementById('quantidadeReposicao').value) || 0;
+            const alert = document.getElementById('reposicaoAlert');
 
-            if (!cor || quantidade <= 0) {
-                alert('Preencha todos os campos!');
+            if (!produtoId || !cor || quantidade <= 0) {
+                alert.innerHTML = '<div class="alert error">Preencha todos os campos!</div>';
                 return;
             }
 
-            const variacao = produtos[produtoId].variacoes[cor];
-            if (quantidade > variacao.estoque) {
-                alert('Quantidade maior que o estoque!');
+            const v = produtos[produtoId].variacoes[cor];
+            if (quantidade > v.estoque) {
+                alert.innerHTML = '<div class="alert error">Quantidade maior que o estoque!</div>';
                 return;
             }
 
-            const novoEstoque = variacao.estoque - quantidade;
+            const novoEstoque = v.estoque - quantidade;
+            const novaGondola = v.gondola + quantidade;
+
             set(ref(database, `produtos/${produtoId}/variacoes/${cor}`), {
-                cor, estoque: novoEstoque, gondola: variacao.gondola
+                cor, estoque: novoEstoque, gondola: novaGondola
             }).then(() => {
                 const historicoEntry = {
                     id: Date.now().toString(),
                     data: new Date().toISOString(),
+                    tipo: 'Reposição',
                     produto: produtos[produtoId].nome,
                     cor, quantidade,
-                    estoqueAnterior: variacao.estoque,
-                    estoqueNovo: novoEstoque
+                    estoqueAnterior: v.estoque,
+                    estoqueNovo: novoEstoque,
+                    gondolaAnterior: v.gondola,
+                    gondolaNova: novaGondola
                 };
                 push(ref(database, 'historico'), historicoEntry).then(() => {
-                    alert('Saída registrada com sucesso!');
-                    fecharReposicao(produtoId);
-                    document.getElementById(`qtd-${produtoId}`).value = '';
-                    document.getElementById(`cor-${produtoId}`).value = '';
+                    alert.innerHTML = '<div class="alert success">✅ Reposição registrada!</div>';
+                    document.getElementById('quantidadeReposicao').value = '';
+                    document.getElementById('reposicaoProduto').value = '';
+                    document.getElementById('reposicaoCor').value = '';
+                    document.getElementById('dadosReposicao').style.display = 'none';
+                    setTimeout(() => { alert.innerHTML = ''; }, 3000);
                 });
+            }).catch(error => {
+                alert.innerHTML = `<div class="alert error">❌ Erro: ${error.message}</div>`;
             });
         };
 
@@ -611,7 +433,7 @@
                     div.innerHTML = `
                         <div class="timestamp">${data.toLocaleString('pt-BR')}</div>
                         <div class="action">${item.produto} - ${item.cor}</div>
-                        <div class="details">Saída: ${item.quantidade} unidades | Estoque: ${item.estoqueAnterior} → ${item.estoqueNovo}</div>
+                        <div class="details">Tipo: ${item.tipo} | Quantidade: ${item.quantidade} | Estoque: ${item.estoqueAnterior} → ${item.estoqueNovo} | Gôndola: ${item.gondolaAnterior} → ${item.gondolaNova}</div>
                     `;
                     historicoList.appendChild(div);
                 });
